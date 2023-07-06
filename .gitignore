@@ -1,0 +1,29 @@
+# User specific configuration files
+/myconfig/
+/hmccreds.yaml  # from the past - move to /myconfig
+
+# Make targets
+/*.done
+
+# Make build
+/build/
+/dist/
+/*.egg-info/
+/AUTHORS
+/ChangeLog
+/MANIFEST
+/MANIFEST.in
+
+# Make test
+__pycache__/
+/.pytest_cache/
+/htmlcov/
+/.coverage
+
+# Make build_doc
+/build_docs/
+
+# Other
+*.swp
+.DS_Store
+/try/
