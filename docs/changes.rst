@@ -12,17 +12,36 @@
 .. See the License for the specific language governing permissions and
 .. limitations under the License.
 
-IBM Z HMC OS Message Forwarder
-==============================
 
-.. toctree::
-   :maxdepth: 2
-   :numbered:
-   :caption: Contents:
+Change log
+----------
 
-   intro.rst
-   usage.rst
-   errors.rst
-   development.rst
-   appendix.rst
-   changes.rst
+
+Version 0.2.0-dev1
+^^^^^^^^^^^^^^^^^^
+
+Released: not yet
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+**Enhancements:**
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-os-forwarder/issues
+
+
+Version 0.1.0
+^^^^^^^^^^^^^
+
+Released: 2023-07-14
+
+Initial PyPI release

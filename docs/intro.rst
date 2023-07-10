@@ -12,8 +12,8 @@
 .. See the License for the specific language governing permissions and
 .. limitations under the License.
 
-IBM Z HMC OS Message Forwarder
-==============================
+Introduction
+============
 
 .. image:: https://img.shields.io/pypi/v/zhmc-os-forwarder.svg
     :target: https://pypi.python.org/pypi/zhmc-os-forwarder/
@@ -33,7 +33,7 @@ IBM Z HMC OS Message Forwarder
 
 The **IBM Z HMC OS Message Forwarder** connects to the console of operating
 systems running in LPARs on Z systems and forwards the messages written by the
-operating systems in the LPARs to remote syslog servers.
+operating systems in the LPARs to remote syslog serverss.
 
 The Z systems can be in classic or DPM operational mode.
 
@@ -41,15 +41,6 @@ The forwarder attempts to stay up as much as possible, for example it performs
 automatic session renewals with the HMC if the logon session expires, and it
 survives HMC reboots and automatically resumes forwarding again once
 the HMC come back up, without loosing or duplicating any messages.
-
-Documentation
--------------
-
-* `Documentation`_
-* `Change log`_
-
-.. _Documentation: https://zhmc-os-forwarder.readthedocs.io/en/stable/
-.. _Change log: https://zhmc-os-forwarder.readthedocs.io/en/stable/changes.html
 
 Supported environments
 ----------------------
@@ -72,13 +63,10 @@ Quickstart
   The config file tells the forwarder which HMC to use, and for which CPCs
   and LPARs it should forward to which syslog servers.
 
-  Download the `Example forwarder config file`_ as ``config.yaml`` and edit
+  Download the :ref:`Example forwarder config file` as ``config.yaml`` and edit
   that copy according to your environment.
 
-  For details, see `Forwarder config file`_.
-
-.. _Example forwarder config file: https://zhmc-os-forwarder.readthedocs.io/en/stable/usage.html#forwarder-config-file
-.. _example config file: examples/config_example.yaml
+  For details, see :ref:`Forwarder config file`.
 
 * Run the forwarder as follows:
 
@@ -90,6 +78,9 @@ Quickstart
       Verbosity level: 0
       Opening session with HMC 10.11.12.13 (user: johndoe@us.ibm.com, certificate validation: False)
       Forwarder is up and running (Press Ctrl-C to shut down)
+
+* Look at the syslogs you have configured in the config file and verify that
+  OS messages show up there.
 
 Limitations
 -----------
