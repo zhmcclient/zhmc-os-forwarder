@@ -1,0 +1,15 @@
+# Config file for Z HMC OS Message Forwarder
+
+hmc:
+  host: 10.11.12.13
+  userid: "myuser"
+  password: "mypassword"
+  verify_cert: false
+
+forwarding:
+  - syslogs:
+     - server: 10.11.12.14
+    cpcs:
+      - cpc: MYCPC
+        partitions:
+          - partition: ".*"
