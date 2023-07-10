@@ -1,0 +1,87 @@
+# JSON Schema of the config file in YAML format.
+
+$schema: http://json-schema.org/draft-07/schema
+title: JSON Schema of the config file
+description: JSON Schema of the config file
+type: object
+required:
+  - hmc
+  - forwarding
+additionalProperties: false
+properties:
+  hmc:
+    description: The HMC the forwarder uses
+    type: object
+    required:
+      - host
+      - userid
+      - password
+    additionalProperties: false
+    properties:
+      host:
+        description: "Hostname or IP address of the HMC"
+        type: string
+      userid:
+        description: "Userid on the HMC"
+        type: string
+      password:
+        description: "Password of the HMC userid"
+        type: string
+      verify_cert:
+        description: "Controls whether and how the HMC certificate is verified: true, false, path name"
+        type: [boolean, string]
+  forwarding:
+    description: "Definition of forwarding items"
+    type: array
+    default: []
+    items:
+      description: "A forwarding item, that defines which partitions forward to which syslog servers"
+      type: object
+      required:
+        - syslogs
+        - cpcs
+      additionalProperties: false
+      properties:
+        syslogs:
+          description: "Syslog servers this forwarding item will forward to"
+          type: array
+          default: []
+          items:
+            description: "A syslog server"
+            type: object
+            required:
+              - server
+            additionalProperties: false
+            properties:
+              server:
+                description: "Hostname or IP address of the syslog server"
+                type: string
+        cpcs:
+          description: "Managed CPCs this forwarding item will look at"
+          type: array
+          default: []
+          items:
+            description: "A CPC reference"
+            type: object
+            required:
+              - cpc
+              - partitions
+            additionalProperties: false
+            properties:
+              cpc:
+                description: "Name of the CPC(s), as a regular expression"
+                type: string
+              partitions:
+                description: "Partitions to be forwarded"
+                type: array
+                default: []
+                items:
+                  description: "A partition to be forwarded"
+                  type: object
+                  required:
+                    - partition
+                  additionalProperties: false
+                  properties:
+                    partition:
+                      description: "Name of the partition(s), as a regular expression"
+                      type: string
