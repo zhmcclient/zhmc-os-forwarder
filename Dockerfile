@@ -14,7 +14,7 @@
 FROM python:3.9-slim
 
 # Make the standard metric definition file available in its default location
-COPY examples/metrics.yaml /etc/zhmc-os-forwarder/metrics.yaml
+COPY examples/config_example.yaml /etc/zhmc-os-forwarder/config.yaml
 
 # Install this package
 ENV TMP_DIR=/tmp/zhmc-os-forwarder

@@ -20,9 +20,9 @@ IBM Z HMC OS Message Forwarder
    :numbered:
    :caption: Contents:
 
-   # intro.rst
-   # usage.rst
-   # errors.rst
-   # development.rst
-   # appendix.rst
-   # changes.rst
+.. # intro.rst
+.. # usage.rst
+.. # errors.rst
+.. # development.rst
+.. # appendix.rst
+.. # changes.rst
