@@ -127,8 +127,7 @@ doc_build_file := $(doc_build_dir)/index.html
 doc_dependent_files := \
     $(wildcard $(doc_dir)/*.*) \
 		$(wildcard $(doc_dir)/*/*.*) \
-		examples/metrics.yaml \
-		examples/hmccreds.yaml \
+		examples/config_example.yaml \
     $(package_py_files) \
 
 # Packages whose dependencies are checked using pip-missing-reqs
@@ -270,7 +269,6 @@ endif
 .PHONY: test
 test: develop_$(pymn).done
 	@echo "Makefile: Performing unit tests and coverage with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
-	@echo "Makefile: Note that the warning about an unknown metric is part of the tests"
 	pytest $(pytest_cov_opts) -s $(test_dir)
 	@echo "Makefile: Done performing unit tests and coverage"
 	@echo "Makefile: $@ done."
