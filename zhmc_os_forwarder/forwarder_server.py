@@ -20,13 +20,13 @@ A class for running the forwarder server
 
 import os
 import logging
-import time
 from threading import Thread, Event
 
 import zhmcclient
 
 from .forwarded_lpars import ForwardedLpars
-from .utils import logprint, PRINT_ALWAYS, RETRY_TIMEOUT_CONFIG, PRINT_V
+from .utils import logprint, PRINT_ALWAYS, PRINT_V, PRINT_VV, \
+    RETRY_TIMEOUT_CONFIG
 
 
 class ForwarderServer:
@@ -52,6 +52,8 @@ class ForwarderServer:
         self.all_lpars = None  # List of all partitions/LPARs as zhmcclient obj
 
         self.forwarded_lpars = None  # ForwardedLpars object
+
+        self.receiver = None  # NotificationReceiver
 
     def startup(self):
         """
@@ -101,6 +103,66 @@ class ForwarderServer:
         self.forwarded_lpars = ForwardedLpars(
             self.session, self.config_data, self.config_filename)
 
+        for lpar in self.all_lpars:
+            cpc = lpar.manager.parent
+            added = self.forwarded_lpars.add_if_matching(lpar)
+            if added:
+                print("LPAR {p!r} on CPC {c!r} will be forwarded".
+                      format(p=lpar.name, c=cpc.name))
+
+        self.receiver = zhmcclient.NotificationReceiver(
+            self.session.object_topic,
+            hmc_data['host'],
+            hmc_data['userid'],
+            hmc_data['password'])
+
+        for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
+            lpar = lpar_info.lpar
+            cpc = lpar.manager.parent
+
+            logprint(logging.INFO, PRINT_VV,
+                     "Opening OS message channel for LPAR {p!r} on CPC {c!r}".
+                     format(p=lpar.name, c=cpc.name))
+            try:
+                os_topic = lpar.open_os_message_channel(
+                    include_refresh_messages=True)
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 409 and exc.reason == 331:
+                    # OS message channel is already open for this session,
+                    # reuse its notification topic.
+                    topic_dicts = self.session.get_notification_topics()
+                    os_topic = None
+                    for topic_dict in topic_dicts:
+                        if topic_dict['topic-type'] != \
+                                'os-message-notification':
+                            continue
+                        obj_uri = topic_dict['object-uri']
+                        if lpar.uri == obj_uri:
+                            os_topic = topic_dict['topic-name']
+                            logprint(logging.INFO, PRINT_VV,
+                                     "Using existing OS message notification "
+                                     "topic {t!r} for LPAR {p!r} on CPC {c!r}".
+                                     format(t=os_topic, p=lpar.name,
+                                            c=cpc.name))
+                            break
+                    if os_topic is None:
+                        raise RuntimeError(
+                            "An OS message notification topic for LPAR {p!r} "
+                            "on CPC {c!r} supposedly exists, but cannot be "
+                            "found in the existing topics for this session: "
+                            "{t}".
+                            format(p=lpar.name, c=cpc.name, t=topic_dicts))
+                if exc.http_status == 409 and exc.reason == 332:
+                    # The OS does not support OS messages.
+                    logprint(logging.WARNING, PRINT_ALWAYS,
+                             "Warning: The OS in LPAR {p!r} on CPC {c!r} does "
+                             "not support OS messages - ignoring the LPAR".
+                             format(p=lpar.name, c=cpc.name))
+                else:
+                    raise
+            self.receiver.subscribe(os_topic)
+            lpar_info.topic = os_topic
+
         self._start()
 
     def shutdown(self):
@@ -109,6 +171,20 @@ class ForwarderServer:
         """
 
         try:
+
+            for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
+                lpar = lpar_info.lpar
+                cpc = lpar.manager.parent
+
+                logprint(logging.INFO, PRINT_VV,
+                         "Unsubscribing OS message channel for LPAR {p!r} on "
+                         "CPC {c!r}".
+                         format(p=lpar.name, c=cpc.name))
+                self.receiver.unsubscribe(lpar_info.topic)
+
+            logprint(logging.INFO, PRINT_ALWAYS,
+                     "Closing notification receiver")
+            self.receiver.close()
 
             if self.thread:
                 logprint(logging.INFO, PRINT_ALWAYS,
@@ -163,11 +239,56 @@ class ForwarderServer:
                  "Entering forwarder thread")
         while True:
 
-            # TODO: Implement the forwarding
-            time.sleep(1)
-
             if self.stop_event.is_set():
                 break
 
+            try:
+                # pylint: disable=unused-variable
+                for headers, message in self.receiver.notifications():
+                    self.handle_notification(headers, message)
+
+            except zhmcclient.NotificationJMSError as exc:
+                logprint(logging.ERROR, PRINT_ALWAYS,
+                         "Error receiving notifications {}: {}".
+                         format(exc.__class__.__name__, exc))
+                logprint(logging.ERROR, PRINT_ALWAYS,
+                         "Receiving notifications again")
+
         logprint(logging.INFO, PRINT_ALWAYS,
                  "Leaving forwarder thread")
+
+    def handle_notification(self, headers, message):
+        """
+        Handle a received notification.
+        """
+        noti_type = headers['notification-type']
+        if noti_type == 'os-message':
+            for msg_info in message['os-messages']:
+                lpar_uri = headers['object-uri']
+                lpar_infos = self.forwarded_lpars.forwarded_lpar_infos
+                try:
+                    lpar_info = lpar_infos[lpar_uri]
+                    lpar = lpar_info.lpar
+                    cpc = lpar.manager.parent
+                    lpar_name = lpar.name
+                    cpc_name = cpc.name
+                except KeyError:
+                    lpar_name = headers['name']  # short name
+                    cpc_name = 'unknown'
+                seq_no = msg_info['sequence-number']
+                msg_txt = msg_info['message-text'].strip('\n')
+
+                # TODO: At this point, we only display the OS message
+                print("OS message: CPC={c} LPAR={p} seq={s:06d}: {m}".
+                      format(c=cpc_name, p=lpar_name, s=seq_no, m=msg_txt))
+
+        else:
+            dest = headers['destination']
+            sub_id = headers['subscription']
+            obj_class = headers['class']
+            obj_name = headers['name']
+            logprint(logging.WARNING, PRINT_ALWAYS,
+                     "Warning: Ignoring {nt!r} notification for {c} {n!r} "
+                     "(subscription: {s}, destination: {d})".
+                     format(nt=noti_type, c=obj_class, n=obj_name, s=sub_id,
+                            d=dest))

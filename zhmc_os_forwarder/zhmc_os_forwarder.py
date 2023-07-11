@@ -173,13 +173,6 @@ def main():
         forwarder_server = ForwarderServer(config_data, config_filename)
         forwarder_server.startup()
 
-        for lpar in forwarder_server.all_lpars:
-            cpc = lpar.manager.parent
-            config = forwarder_server.forwarded_lpars.config
-            match = 'yes' if config.get_syslog_servers(lpar) else 'no'
-            print("Debug: LPAR {}.{} matches: {}".
-                  format(cpc.name, lpar.name, match))
-
         logprint(logging.INFO, PRINT_ALWAYS,
                  "Forwarder is up and running (Press Ctrl-C to shut down)")
 

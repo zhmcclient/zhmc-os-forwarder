@@ -18,19 +18,21 @@
 A class for storing forwarded LPARs and their syslog servers
 """
 
-from collections import namedtuple
-
 from .forwarder_config import ForwarderConfig
 
 
-# Info for a single forwarded LPAR
-ForwardedLparInfo = namedtuple(
-    'ForwardedLparInfo',
-    [
-        'lpar_obj',             # zhmcclient.Partition/Lpar object
-        'syslog_servers',       # List of strings: Syslog servers for the LPAR
-    ]
-)
+# pylint: disable=too-few-public-methods
+class ForwardedLparInfo:
+    """
+    Info for a single forwarded LPAR
+    """
+
+    def __init__(self, lpar, syslog_servers=None, topic=None):
+        self.lpar = lpar
+        if not syslog_servers:
+            syslog_servers = []
+        self.syslog_servers = syslog_servers
+        self.topic = topic
 
 
 class ForwardedLpars:
@@ -55,7 +57,7 @@ class ForwardedLpars:
 
         # Representation of forwarded LPARs
         # - key: LPAR URI
-        # - value: namedtuple ForwardedLparInfo
+        # - value: ForwardedLparInfo
         self.forwarded_lpar_infos = {}
 
     def __str__(self):
@@ -81,13 +83,17 @@ class ForwardedLpars:
         Parameters:
           lpar (zhmcclient.Partition/Lpar or string): The LPAR, as a zhmcclient
             resource object or as a URI string.
+
+        Returns:
+            bool: Indicates whether the LPAR was added.
         """
         syslog_servers = self.config.get_syslog_servers(lpar)
         if syslog_servers:
             if lpar.uri not in self.forwarded_lpar_infos:
-                self.forwarded_lpar_infos[lpar.uri] = \
-                    ForwardedLparInfo(lpar, [])
+                self.forwarded_lpar_infos[lpar.uri] = ForwardedLparInfo(lpar)
             self.forwarded_lpar_infos[lpar.uri].syslog_servers = syslog_servers
+            return True
+        return False
 
     def remove(self, lpar):
         """
