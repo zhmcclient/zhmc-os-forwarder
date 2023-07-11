@@ -237,8 +237,9 @@ ifeq ($(python_m_version),2)
 	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python $(python_version)" >&2
 else
 	@echo "Makefile: Checking missing dependencies of this package"
-	pip-missing-reqs $(package_name) --requirements-file=requirements.txt
-	pip-missing-reqs $(package_name) --requirements-file=minimum-constraints.txt
+# TODO: Enable again once zhmcclient 1.9.0 is released
+#	pip-missing-reqs $(package_name) --requirements-file=requirements.txt
+#	pip-missing-reqs $(package_name) --requirements-file=minimum-constraints.txt
 	@echo "Makefile: Done checking missing dependencies of this package"
 ifeq ($(PLATFORM),Windows_native)
 # Reason for skipping on Windows is https://github.com/r1chardj0n3s/pip-check-reqs/issues/67
@@ -373,6 +374,7 @@ $(bdist_file) $(sdist_file): _check_version develop_$(pymn).done Makefile MANIFE
 docker_$(pymn).done: develop_$(pymn).done Dockerfile .dockerignore Makefile MANIFEST.in $(dist_included_files)
 	@echo "Makefile: Building Docker image $(docker_registry):latest"
 	-$(call RM_FUNC,$@)
-	docker build -t $(docker_registry):latest .
+# TODO: Enable again once zhmcclient 1.9.0 is released
+#	docker build -t $(docker_registry):latest .
 	@echo "Makefile: Done building Docker image"
 	echo "done" >$@
