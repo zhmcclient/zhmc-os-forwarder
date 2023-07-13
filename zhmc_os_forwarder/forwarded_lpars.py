@@ -27,11 +27,11 @@ class ForwardedLparInfo:
     Info for a single forwarded LPAR
     """
 
-    def __init__(self, lpar, syslog_servers=None, topic=None):
+    def __init__(self, lpar, syslogs=None, topic=None):
         self.lpar = lpar
-        if not syslog_servers:
-            syslog_servers = []
-        self.syslog_servers = syslog_servers
+        if not syslogs:
+            syslogs = []
+        self.syslogs = syslogs
         self.topic = topic
 
 
@@ -87,11 +87,11 @@ class ForwardedLpars:
         Returns:
             bool: Indicates whether the LPAR was added.
         """
-        syslog_servers = self.config.get_syslog_servers(lpar)
-        if syslog_servers:
+        syslogs = self.config.get_syslogs(lpar)
+        if syslogs:
             if lpar.uri not in self.forwarded_lpar_infos:
                 self.forwarded_lpar_infos[lpar.uri] = ForwardedLparInfo(lpar)
-            self.forwarded_lpar_infos[lpar.uri].syslog_servers = syslog_servers
+            self.forwarded_lpar_infos[lpar.uri].syslogs = syslogs
             return True
         return False
 
@@ -121,9 +121,9 @@ class ForwardedLpars:
         """
         return lpar.uri in self.forwarded_lpar_infos
 
-    def get_syslog_servers(self, lpar):
+    def get_syslogs(self, lpar):
         """
-        Get the syslog servers for a forwarded LPAR.
+        Get the syslogs from the forwarder config for a forwarded LPAR.
 
         If the LPAR is not currently forwarded, returns None.
 
@@ -132,10 +132,10 @@ class ForwardedLpars:
             resource object or as a URI string.
 
         Returns:
-          list of str: The syslog servers for the LPAR, or None.
+          list of ConfigSyslogInfo: The syslogs for the LPAR, or None.
         """
         try:
             lpar_info = self.forwarded_lpar_infos[lpar.uri]
         except KeyError:
             return None
-        return lpar_info.syslog_servers
+        return lpar_info.syslogs

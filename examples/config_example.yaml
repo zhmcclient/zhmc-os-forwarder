@@ -7,9 +7,15 @@ hmc:
   verify_cert: false
 
 forwarding:
+  # Each item in this list is a forwarding definition that specifies which
+  # LPARs on which CPCs should forward their OS messages to which set of
+  # remote syslog servers.
   - syslogs:
-     - server: 10.11.12.14
+     - host: 10.11.12.14
+       port: 514
+       port_type: udp
+       facility: user
     cpcs:
-      - cpc: MYCPC
+      - cpc: MYCPC    # Can be a regular expression
         partitions:
-          - partition: ".*"
+          - partition: ".*"    # Can be a regular expression

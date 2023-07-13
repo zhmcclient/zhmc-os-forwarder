@@ -22,6 +22,10 @@ import re
 
 from collections import namedtuple
 
+# Default syslog properties, if not specified in forwarder config
+DEFAULT_SYSLOG_PORT = 514
+DEFAULT_SYSLOG_PORT_TYPE = 'tcp'
+DEFAULT_SYSLOG_FACILITY = 'user'
 
 # Info for a single CPC pattern in the forwarder config
 ConfigCpcInfo = namedtuple(
@@ -39,9 +43,23 @@ ConfigLparInfo = namedtuple(
     'ConfigLparInfo',
     [
         'lpar_pattern',         # string: Compiled pattern for LPAR name
-        'syslog_servers',       # List of strings: Syslog servers for the LPAR
+        'syslogs',              # list of ConfigSyslogInfo: Syslogs for the LPAR
     ]
 )
+
+
+# pylint: disable=too-few-public-methods
+class ConfigSyslogInfo:
+    """
+    Info for a single syslog in the forwarder config
+    """
+
+    def __init__(self, host, port, port_type, facility):
+        self.host = host  # string: Syslog IP address or hostname
+        self.port = port  # int: Syslog port number
+        self.port_type = port_type  # int: Syslog port type ('tcp', 'udp')
+        self.facility = facility  # string: Syslog facility (e.g. 'user')
+        self.logger = None  # logging.Logger: Python logger for syslog
 
 
 class ForwarderConfig:
@@ -75,16 +93,23 @@ class ForwarderConfig:
         #             - partition: "dal1-.*"
 
         for fwd_item in forwarding:
-            syslog_servers = []
-            for sls_item in fwd_item['syslogs']:
-                syslog_servers.append(sls_item['server'])
+            syslogs = []
+            for sl_item in fwd_item['syslogs']:
+                sl_host = sl_item['host']
+                sl_port = sl_item.get('port', DEFAULT_SYSLOG_PORT)
+                sl_port_type = sl_item.get('port_type',
+                                           DEFAULT_SYSLOG_PORT_TYPE)
+                sl_facility = sl_item.get('facility', DEFAULT_SYSLOG_FACILITY)
+                syslog_info = ConfigSyslogInfo(
+                    sl_host, sl_port, sl_port_type, sl_facility)
+                syslogs.append(syslog_info)
             for cpc_item in fwd_item['cpcs']:
                 cpc_pattern = re.compile('^{}$'.format(cpc_item['cpc']))
                 cpc_info = ConfigCpcInfo(cpc_pattern, [])
                 for lpar_item in cpc_item['partitions']:
                     lpar_pattern = re.compile(
                         '^{}$'.format(lpar_item['partition']))
-                    lpar_info = ConfigLparInfo(lpar_pattern, syslog_servers)
+                    lpar_info = ConfigLparInfo(lpar_pattern, syslogs)
                     cpc_info.lpar_infos.append(lpar_info)
                 self.config_cpc_infos.append(cpc_info)
 
@@ -99,9 +124,9 @@ class ForwarderConfig:
                 "config_cpc_infos={s.config_cpc_infos!r}"
                 ")".format(s=self))
 
-    def get_syslog_servers(self, lpar):
+    def get_syslogs(self, lpar):
         """
-        Get the syslog servers for an LPAR if it matches the forwarder config.
+        Get the syslogs for an LPAR if it matches the forwarder config.
 
         If it does not match the forwarder config, None is returned.
 
@@ -110,7 +135,7 @@ class ForwarderConfig:
             resource object.
 
         Returns:
-          list of string: List of syslog servers if matching, or None
+          list of ConfigSyslogInfo: List of syslogs if matching, or None
           otherwise.
         """
         cpc = lpar.manager.parent
@@ -118,5 +143,5 @@ class ForwarderConfig:
             if cpc_info.cpc_pattern.match(cpc.name):
                 for lpar_info in cpc_info.lpar_infos:
                     if lpar_info.lpar_pattern.match(lpar.name):
-                        return lpar_info.syslog_servers
+                        return lpar_info.syslogs
         return None
