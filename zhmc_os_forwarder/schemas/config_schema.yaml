@@ -50,12 +50,30 @@ properties:
             description: "A syslog server"
             type: object
             required:
-              - server
+              - host
             additionalProperties: false
             properties:
-              server:
+              host:
                 description: "Hostname or IP address of the syslog server"
                 type: string
+              port:
+                description: "Port number of the syslog server"
+                type: integer
+                default: 514
+              port_type:
+                description: "Port type of the syslog server"
+                type: string
+                enum: [tcp, udp]
+                default: tcp
+              facility:
+                description: "Facility name for the syslog server"
+                type: string
+                enum: [
+                    user, auth, authpriv, security, local0,
+                    local1, local2, local3, local4, local5,
+                    local6, local7
+                ]
+                default: user
         cpcs:
           description: "Managed CPCs this forwarding item will look at"
           type: array

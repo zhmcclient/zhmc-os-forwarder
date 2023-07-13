@@ -20,6 +20,7 @@ A class for running the forwarder server
 
 import os
 import logging
+import socket
 from threading import Thread, Event
 
 import zhmcclient
@@ -107,15 +108,17 @@ class ForwarderServer:
             cpc = lpar.manager.parent
             added = self.forwarded_lpars.add_if_matching(lpar)
             if added:
-                print("LPAR {p!r} on CPC {c!r} will be forwarded".
-                      format(p=lpar.name, c=cpc.name))
+                logprint(logging.INFO, PRINT_V,
+                         "LPAR {p!r} on CPC {c!r} will be forwarded".
+                         format(p=lpar.name, c=cpc.name))
 
         self.receiver = zhmcclient.NotificationReceiver(
-            self.session.object_topic,
+            [],  # self.session.object_topic to get notifications to ignore
             hmc_data['host'],
             hmc_data['userid'],
             hmc_data['password'])
 
+        logger_id = 0  # ID number used in Python logger name
         for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
             lpar = lpar_info.lpar
             cpc = lpar.manager.parent
@@ -163,7 +166,46 @@ class ForwarderServer:
             self.receiver.subscribe(os_topic)
             lpar_info.topic = os_topic
 
+            # Prepare sending to syslogs by creating Python loggers
+            for syslog in self.forwarded_lpars.get_syslogs(lpar):
+                try:
+                    logger = self._create_logger(syslog, logger_id)
+                except ConnectionError as exc:
+                    logprint(logging.WARNING, PRINT_ALWAYS,
+                             "Warning: Skipping syslog server: {}".format(exc))
+                    continue
+                logger_id += 1
+                syslog.logger = logger
+
         self._start()
+
+    @staticmethod
+    def _create_logger(syslog, logger_id):
+        facility_code = logging.handlers.SysLogHandler.facility_names[
+            syslog.facility]
+        if syslog.port_type == 'tcp':
+            # Newer syslog protocols, e.g. rsyslog
+            socktype = socket.SOCK_STREAM
+        else:
+            assert syslog.port_type == 'udp'
+            # Older syslog protocols, e.g. BSD
+            socktype = socket.SOCK_DGRAM
+        try:
+            handler = logging.handlers.SysLogHandler(
+                (syslog.host, syslog.port), facility_code,
+                socktype=socktype)
+        except Exception as exc:
+            raise ConnectionError(
+                "Cannot create log handler for syslog server at "
+                "{host}, port {port}/{port_type}: {msg}".
+                format(host=syslog.host, port=syslog.port,
+                       port_type=syslog.port_type, msg=str(exc)))
+        handler.setFormatter(logging.Formatter('%(message)s'))
+        logger_name = 'zhmcosfwd_syslog_{}'.format(logger_id)
+        logger = logging.getLogger(logger_name)
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+        return logger
 
     def shutdown(self):
         """
@@ -235,7 +277,7 @@ class ForwarderServer:
         """
         The method running as the forwarder server thread.
         """
-        logprint(logging.INFO, PRINT_ALWAYS,
+        logprint(logging.INFO, PRINT_V,
                  "Entering forwarder thread")
         while True:
 
@@ -254,7 +296,7 @@ class ForwarderServer:
                 logprint(logging.ERROR, PRINT_ALWAYS,
                          "Receiving notifications again")
 
-        logprint(logging.INFO, PRINT_ALWAYS,
+        logprint(logging.INFO, PRINT_V,
                  "Leaving forwarder thread")
 
     def handle_notification(self, headers, message):
@@ -266,22 +308,11 @@ class ForwarderServer:
             for msg_info in message['os-messages']:
                 lpar_uri = headers['object-uri']
                 lpar_infos = self.forwarded_lpars.forwarded_lpar_infos
-                try:
-                    lpar_info = lpar_infos[lpar_uri]
-                    lpar = lpar_info.lpar
-                    cpc = lpar.manager.parent
-                    lpar_name = lpar.name
-                    cpc_name = cpc.name
-                except KeyError:
-                    lpar_name = headers['name']  # short name
-                    cpc_name = 'unknown'
+                lpar_info = lpar_infos[lpar_uri]
+                lpar = lpar_info.lpar
                 seq_no = msg_info['sequence-number']
                 msg_txt = msg_info['message-text'].strip('\n')
-
-                # TODO: At this point, we only display the OS message
-                print("OS message: CPC={c} LPAR={p} seq={s:06d}: {m}".
-                      format(c=cpc_name, p=lpar_name, s=seq_no, m=msg_txt))
-
+                self.send_to_syslogs(lpar, seq_no, msg_txt)
         else:
             dest = headers['destination']
             sub_id = headers['subscription']
@@ -292,3 +323,24 @@ class ForwarderServer:
                      "(subscription: {s}, destination: {d})".
                      format(nt=noti_type, c=obj_class, n=obj_name, s=sub_id,
                             d=dest))
+
+    def send_to_syslogs(self, lpar, seq_no, msg_txt):
+        """
+        Send a single OS message to the configured syslogs for its LPAR.
+        """
+        cpc = lpar.manager.parent
+        for syslog in self.forwarded_lpars.get_syslogs(lpar):
+            if syslog.logger:
+                syslog_txt = ('{c} {p} {s}: {m}'.
+                              format(c=cpc.name, p=lpar.name, s=seq_no,
+                                     m=msg_txt))
+                try:
+                    syslog.logger.info(syslog_txt)
+                # pylint: disable=broad-exception-caught
+                except Exception as exc:
+                    logprint(logging.WARNING, PRINT_ALWAYS,
+                             "Warning: Cannot send seq_no {s} from LPAR {p!r} "
+                             "on CPC {c!r} to syslog host {h}: {m}".
+                             format(s=seq_no, p=lpar.name, c=cpc.name,
+                                    h=syslog.host, m=exc))
+                    continue

@@ -32,20 +32,23 @@ IBM Z HMC OS Message Forwarder
     :alt: Test coverage (master)
 
 The **IBM Z HMC OS Message Forwarder** connects to the console of operating
-systems and forwards the OS messages on the console to a remote syslog server.
+systems running in LPARs on Z systems and forwards the messages written by the
+operating system to its console to a remote syslog server.
 
-The forwarder attempts to stay up as much as possible, for example it performs
-automatic session renewals with the HMC if the logon session expires, and it
-survives HMC reboots and automatically picks up message forwarding at the
-right message sequence number once the HMC come back up.
+The Z systems can be in classic or DPM operatonal mode.
+
+.. # The forwarder attempts to stay up as much as possible, for example it performs
+.. # automatic session renewals with the HMC if the logon session expires, and it
+.. # survives HMC reboots and automatically picks up message forwarding at the
+.. # right message sequence number once the HMC come back up.
 
 .. _IBM Z: https://www.ibm.com/it-infrastructure/z
 
 Documentation
 -------------
 
-* `Documentation`_
-* `Change log`_
+* `Documentation`_ (not yet)
+* `Change log`_ (not yet)
 
 .. _Documentation: https://zhmc-os-forwarder.readthedocs.io/en/stable/
 .. _Change log: https://zhmc-os-forwarder.readthedocs.io/en/stable/changes.html
@@ -67,7 +70,7 @@ Quickstart
   Download the `example config file`_ as ``config.yaml`` and edit that copy
   according to your environment.
 
-  For details, see `forwarder config file`_.
+.. # For details, see `forwarder config file`_.
 
 .. _forwarder config file: https://zhmc-os-forwarder.readthedocs.io/en/stable/usage.html#hmc-credentials-file
 .. _example config file: examples/config_example.yaml
@@ -77,6 +80,17 @@ Quickstart
   .. code-block:: bash
 
       $ zhmc_os_forwarder -c config.yaml
+
+Limitations
+-----------
+
+At this point, the forwarder has several limitations. All of them are intended
+to be resolved in future releases.
+
+* The forwarder does not recover from HMC restart or connection loss
+* Restarting the forwarder will send again all OS messages the HMC has buffered
+* New and deleted partitions in DPM mode are not automatically detected.
+* No documentation
 
 Reporting issues
 ----------------
