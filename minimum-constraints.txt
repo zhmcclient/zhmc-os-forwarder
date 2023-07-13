@@ -83,7 +83,6 @@ wheel==0.38.1; python_version >= '3.7'
 
 urllib3==1.26.5
 jsonschema==3.2.0
-Jinja2==2.11.3
 # PyYAML is also used by dparse
 PyYAML==5.3.1; python_version == '3.5'
 PyYAML==5.4; python_version >= '3.6'
@@ -222,6 +221,7 @@ gitdb==4.0.8; python_version >= '3.6'
 html5lib==1.0.1  # used with minimum package levels
 imagesize==0.7.1
 iniconfig==1.1.1; python_version >= "3.6"  # used by pytest since its 6.0.0 which requires py36
+Jinja2==2.11.3
 keyring==18.0.0
 more-itertools==8.0.0  # used with minimum package levels
 pkginfo==1.4.2
