@@ -56,6 +56,7 @@ class ForwarderServer:
         self.forwarded_lpars = None  # ForwardedLpars object
 
         self.receiver = None  # NotificationReceiver
+        self.num_subscriptions = None
 
     def startup(self):
         """
@@ -119,6 +120,7 @@ class ForwarderServer:
             hmc_data['userid'],
             hmc_data['password'])
 
+        self.num_subscriptions = 0
         logger_id = 0  # ID number used in Python logger name
         for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
             lpar = lpar_info.lpar
@@ -165,6 +167,7 @@ class ForwarderServer:
                     os_topic = None
                 else:
                     raise
+
             if os_topic:
                 logprint(logging.INFO, PRINT_VV,
                          "Subscribing for OS message notifications for LPAR "
@@ -172,6 +175,7 @@ class ForwarderServer:
                          format(p=lpar.name, c=cpc.name, t=os_topic))
                 self.receiver.subscribe(os_topic)
                 lpar_info.topic = os_topic
+                self.num_subscriptions += 1
 
             # Prepare sending to syslogs by creating Python loggers
             for syslog in self.forwarded_lpars.get_syslogs(lpar):

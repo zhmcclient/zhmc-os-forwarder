@@ -179,6 +179,11 @@ def main():
             new_exc.__cause__ = None  # pylint: disable=invalid-name
             raise new_exc
 
+        logprint(logging.INFO, PRINT_V,
+                 "Current number of subscriptions for OS message "
+                 "notifications: {}".
+                 format(forwarder_server.num_subscriptions))
+
         logprint(logging.INFO, PRINT_ALWAYS,
                  "Forwarder is up and running (Press Ctrl-C to shut down)")
 
