@@ -9,7 +9,7 @@
 #
 # Example docker command to run the forwarder using a locally built version of this image:
 #
-#   docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcosforwarder -c /root/myconfig/config.yaml -v
+#   docker run -it --rm -v $(pwd)/myconfig:/root/myconfig -p 514:514 zhmcosforwarder -c /root/myconfig/config.yaml -v
 
 FROM python:3.9-slim
 
