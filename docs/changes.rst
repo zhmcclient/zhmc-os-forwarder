@@ -35,6 +35,9 @@ Released: not yet
 * Improved error handling when encountering HMC errors, by producing a proper
   error message instead of a Python traceback.
 
+* Improved cleanup by not attempting to unsubscribe from LPARs that were
+  ignored. (issue #25)
+
 **Enhancements:**
 
 * Added documentation (issue #9)

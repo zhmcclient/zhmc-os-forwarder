@@ -166,6 +166,10 @@ class ForwarderServer:
                 else:
                     raise
             if os_topic:
+                logprint(logging.INFO, PRINT_VV,
+                         "Subscribing for OS message notifications for LPAR "
+                         "{p!r} on CPC {c!r} (topic: {t})".
+                         format(p=lpar.name, c=cpc.name, t=os_topic))
                 self.receiver.subscribe(os_topic)
                 lpar_info.topic = os_topic
 
@@ -222,17 +226,19 @@ class ForwarderServer:
                 lpar = lpar_info.lpar
                 cpc = lpar.manager.parent
 
-                logprint(logging.INFO, PRINT_VV,
-                         "Unsubscribing OS message channel for LPAR {p!r} on "
-                         "CPC {c!r}".
-                         format(p=lpar.name, c=cpc.name))
-                try:
-                    self.receiver.unsubscribe(lpar_info.topic)
-                except zhmcclient.Error as exc:
-                    logprint(logging.ERROR, PRINT_ALWAYS,
-                             "Error unsubscribing OS message channel for "
-                             "LPAR {p!r} on CPC {c!r}: {m}".
-                             format(p=lpar.name, c=cpc.name, m=exc))
+                if lpar_info.topic:
+                    logprint(logging.INFO, PRINT_VV,
+                             "Unsubscribing OS message channel for LPAR {p!r} "
+                             "on CPC {c!r} (topic: {t})".
+                             format(p=lpar.name, c=cpc.name, t=lpar_info.topic))
+                    try:
+                        self.receiver.unsubscribe(lpar_info.topic)
+                    except zhmcclient.Error as exc:
+                        logprint(logging.ERROR, PRINT_ALWAYS,
+                                 "Error unsubscribing OS message channel for "
+                                 "LPAR {p!r} on CPC {c!r} (topic: {t}): {m}".
+                                 format(p=lpar.name, c=cpc.name,
+                                        t=lpar_info.topic, m=exc))
 
         if self.receiver:
             try:
