@@ -72,13 +72,13 @@ Quickstart
   The config file tells the forwarder which HMC to use, and for which CPCs
   and LPARs it should forward to which syslog servers.
 
-  Download the `Example forwarder config file`_ as ``config.yaml`` and edit
-  that copy according to your environment.
+  Download the `Example forwarder config file`_ and edit that copy according
+  to your needs.
 
   For details, see `Forwarder config file`_.
 
-.. _Example forwarder config file: https://zhmc-os-forwarder.readthedocs.io/en/stable/usage.html#forwarder-config-file
-.. _example config file: examples/config_example.yaml
+.. _Example forwarder config file: examples/config_example.yaml
+.. _Forwarder config file: https://zhmc-os-forwarder.readthedocs.io/en/stable/usage.html#forwarder-config-file
 
 * Run the forwarder as follows:
 

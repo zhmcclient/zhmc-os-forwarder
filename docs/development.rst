@@ -20,7 +20,7 @@ This page covers the relevant aspects for developers.
 Repository
 ----------
 
-The Git repository for the exporter project is GitHub:
+The Git repository for the forwarder project is GitHub:
 https://github.com/zhmcclient/zhmc-os-forwarder
 
 Code of Conduct

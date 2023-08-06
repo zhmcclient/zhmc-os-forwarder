@@ -105,7 +105,7 @@ DEFAULT_CONFIG_FILE = '/etc/zhmc-os-forwarder/config.yaml'
 # Retry
 #
 
-# Sleep time in seconds when retrying metrics retrieval
+# Sleep time in seconds when retrying HMC connections
 RETRY_SLEEP_TIME = 10
 
 # Retry / timeout configuration for zhmcclient (used at the socket level)

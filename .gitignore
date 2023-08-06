@@ -1,6 +1,5 @@
 # User specific configuration files
 /myconfig/
-/hmccreds.yaml  # from the past - move to /myconfig
 
 # Make targets
 /*.done

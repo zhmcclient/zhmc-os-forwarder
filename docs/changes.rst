@@ -30,6 +30,8 @@ Released: not yet
 
 **Enhancements:**
 
+* Added documentation (issue #9)
+
 **Cleanup:**
 
 **Known issues:**

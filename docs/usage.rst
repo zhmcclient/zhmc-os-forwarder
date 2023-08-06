@@ -63,7 +63,7 @@ you want to embed the forwarder in your own Docker/OCI image.
 
   .. code-block:: bash
 
-      $ docker run -it --rm -v $(pwd)/myconfig:/root/myconfig -p 9291:9291 zhmcforwarder -c /root/myconfig/config.yaml -v
+      $ docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcforwarder -c /root/myconfig/config.yaml -v
 
   In this command, the forwarder config file is provided on the local system
   as ``./myconfig/config.yaml``. The ``-v`` option of 'docker run' mounts the
