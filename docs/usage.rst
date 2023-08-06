@@ -63,7 +63,7 @@ you want to embed the forwarder in your own Docker/OCI image.
 
   .. code-block:: bash
 
-      $ docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcforwarder -c /root/myconfig/config.yaml -v
+      $ docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcforwarder -p 514:514 -c /root/myconfig/config.yaml -v
 
   In this command, the forwarder config file is provided on the local system
   as ``./myconfig/config.yaml``. The ``-v`` option of 'docker run' mounts the
@@ -71,7 +71,10 @@ you want to embed the forwarder in your own Docker/OCI image.
   The ``-c`` option of the forwarder references the forwarder config file as it
   appears in the container's file system.
 
-  **TODO: Clarify which ports need to be open**
+  The command above maps port 514 in the docker container to port 514 of the
+  system running docker. That is the default port used by syslog. If your remote
+  syslog servers use different ports, they need to be mapped using the `-p` option
+  of the "docker run" command.
 
 
 zhmc_os_forwarder command
@@ -155,9 +158,12 @@ the ``zhmc_os_forwarder`` command.
 
 The HMC userid must have the following permissions:
 
-* Object access permission to **TODO: Document required object access permissons**
+* Object access permission to the following objects:
+  - LPARs for which OS messages should be forwarded
+  - CPCs containing these LPARs
 
-* Task permission for **TODO: Document required task permissons**
+* Task permission for the following tasks:
+  - "Operating System Messages" task (view-only mode is sufficient)
 
 
 HMC certificate
