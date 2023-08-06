@@ -78,13 +78,11 @@ wheel==0.38.1; python_version >= '3.7'
 
 # Direct dependencies for runtime (must be consistent with requirements.txt)
 
-zhmcclient==1.9.0
+zhmcclient==1.10.0
 
 urllib3==1.26.5
 jsonschema==3.2.0
-# PyYAML is also used by dparse
-PyYAML==5.3.1; python_version == '3.5'
-PyYAML==5.4; python_version >= '3.6'
+PyYAML==5.3.1
 
 # Indirect dependencies for runtime that require a version constraint (must be consistent with requirements.txt)
 
