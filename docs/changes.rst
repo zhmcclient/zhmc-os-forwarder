@@ -32,6 +32,9 @@ Released: not yet
   closing down with the HMC. The errors are logged and displayed, but the
   cleanup continues.
 
+* Improved error handling when encountering HMC errors, by producing a proper
+  error message instead of a Python traceback.
+
 **Enhancements:**
 
 * Added documentation (issue #9)
