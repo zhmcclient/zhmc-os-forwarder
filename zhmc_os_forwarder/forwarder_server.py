@@ -45,6 +45,7 @@ class ForwarderServer:
         self.config_filename = config_filename
 
         self.thread = Thread(target=self.run)  # forwarder thread
+        self.thread_started = False
         self.stop_event = Event()  # Set event to stop forwarder thread
 
         self.session = None  # zhmcclient.Session with the HMC
@@ -180,6 +181,7 @@ class ForwarderServer:
                 syslog.logger = logger
 
         self._start()
+        self.thread_started = True
 
     @staticmethod
     def _create_logger(syslog, logger_id):
@@ -215,41 +217,44 @@ class ForwarderServer:
         Stop the forwarder thread and clean up the forwarder server.
         """
 
-        for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
-            lpar = lpar_info.lpar
-            cpc = lpar.manager.parent
+        if self.forwarded_lpars:
+            for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
+                lpar = lpar_info.lpar
+                cpc = lpar.manager.parent
 
-            logprint(logging.INFO, PRINT_VV,
-                     "Unsubscribing OS message channel for LPAR {p!r} on "
-                     "CPC {c!r}".
-                     format(p=lpar.name, c=cpc.name))
+                logprint(logging.INFO, PRINT_VV,
+                         "Unsubscribing OS message channel for LPAR {p!r} on "
+                         "CPC {c!r}".
+                         format(p=lpar.name, c=cpc.name))
+                try:
+                    self.receiver.unsubscribe(lpar_info.topic)
+                except zhmcclient.Error as exc:
+                    logprint(logging.ERROR, PRINT_ALWAYS,
+                             "Error unsubscribing OS message channel for "
+                             "LPAR {p!r} on CPC {c!r}: {m}".
+                             format(p=lpar.name, c=cpc.name, m=exc))
+
+        if self.receiver:
             try:
-                self.receiver.unsubscribe(lpar_info.topic)
+                logprint(logging.INFO, PRINT_ALWAYS,
+                         "Closing notification receiver")
+                self.receiver.close()
             except zhmcclient.Error as exc:
                 logprint(logging.ERROR, PRINT_ALWAYS,
-                         "Error unsubscribing OS message channel for "
-                         "LPAR {p!r} on CPC {c!r}: {m}".
-                         format(p=lpar.name, c=cpc.name, m=exc))
+                         "Error closing notification receiver: {m}".
+                         format(m=exc))
 
-        try:
-            logprint(logging.INFO, PRINT_ALWAYS,
-                     "Closing notification receiver")
-            self.receiver.close()
-        except zhmcclient.Error as exc:
-            logprint(logging.ERROR, PRINT_ALWAYS,
-                     "Error closing notification receiver: {m}".
-                     format(m=exc))
-
-        try:
-            if self.thread:
+        if self.thread_started:
+            try:
                 logprint(logging.INFO, PRINT_ALWAYS,
                          "Stopping forwarder thread")
                 self._stop()
-        # pylint: disable=broad-exception-caught
-        except Exception as exc:
-            logprint(logging.ERROR, PRINT_ALWAYS,
-                     "Error stopping forwarder thread: {m}".
-                     format(m=exc))
+            # pylint: disable=broad-exception-caught
+            except Exception as exc:
+                logprint(logging.ERROR, PRINT_ALWAYS,
+                         "Error stopping forwarder thread: {m}".
+                         format(m=exc))
+            self.thread_started = False
 
         # logprint(logging.INFO, PRINT_ALWAYS,
         #          "Cleaning up partition notifications on HMC")

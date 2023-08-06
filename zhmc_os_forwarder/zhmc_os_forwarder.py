@@ -171,7 +171,13 @@ def main():
                  "retries.".format(r=RETRY_TIMEOUT_CONFIG))
 
         forwarder_server = ForwarderServer(config_data, config_filename)
-        forwarder_server.startup()
+        try:
+            forwarder_server.startup()
+        except zhmcclient.Error as exc:
+            new_exc = ImproperExit(
+                "{}: {}".format(exc.__class__.__name__, exc))
+            new_exc.__cause__ = None  # pylint: disable=invalid-name
+            raise new_exc
 
         logprint(logging.INFO, PRINT_ALWAYS,
                  "Forwarder is up and running (Press Ctrl-C to shut down)")
