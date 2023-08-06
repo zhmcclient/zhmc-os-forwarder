@@ -17,14 +17,10 @@ Change log
 ----------
 
 
-Version 0.2.0-dev1
-^^^^^^^^^^^^^^^^^^
+Version 0.2.0
+^^^^^^^^^^^^^
 
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
+Released: 2023-08-06
 
 **Bug fixes:**
 
@@ -45,14 +41,6 @@ Released: not yet
 * Optimized the subscription for OS message notifications, by not
   subscribing for OS message notifications for LPARs when opening the
   OS message channel returns that the OS does not support it.
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-os-forwarder/issues
 
 
 Version 0.1.0
