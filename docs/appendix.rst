@@ -26,21 +26,23 @@ Glossary
 
     forwarder config file
         A YAML file with the configuration for the :term:`forwarder`.
+        For details, see :term:`Forwarder config file`.
 
     LPAR
     logical partition
     partition
         Logical partitions are, in practice, equivalent to separate Z systems.
-        Each logical partition runs its own operating system. The HMC Web
-        Services API (see :term:`HMC API`) has two distinct resource types:
-        "partition" when the Z system is in the DPM operational mode, and
+        Each logical partition runs its own operating system.
+
+        See also `Mainframe hardware: Logical partitions (LPARs) <https://www.ibm.com/docs/en/zos-basic-skills?topic=design-mainframe-hardware-logical-partitions-lpars>`_.
+
+        The HMC Web Services API (see :term:`HMC API`) has two distinct resource
+        types: "partition" when the Z system is in the DPM operational mode, and
         "logical-partition" when the Z system is in the classic operational
         mode, but it is the same concept.
 
         Even though the :term:`forwarder` supports Z systems in both operational
         modes, this document uses the single term "LPAR" for simplicity.
-
-        See also `Mainframe hardware: Logical partitions (LPARs) <https://www.ibm.com/docs/en/zos-basic-skills?topic=design-mainframe-hardware-logical-partitions-lpars>`_
 
     regular expression
         Regular expressions in the :term:`forwarder config files <forwarder config file>`

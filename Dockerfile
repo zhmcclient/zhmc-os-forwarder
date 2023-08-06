@@ -7,14 +7,11 @@
 # The HMC credentials file still needs to be made available to the container
 # using some mount option and specified with -c.
 #
-# Example docker command to run the exporter using a locally built version of this image:
+# Example docker command to run the forwarder using a locally built version of this image:
 #
-#   docker run -it --rm -v $(pwd)/myconfig:/root/myconfig -p 9291:9291 zhmcosforwarder -c /root/myconfig/hmccreds.yaml -v
+#   docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcosforwarder -c /root/myconfig/config.yaml -v
 
 FROM python:3.9-slim
-
-# Make the standard metric definition file available in its default location
-COPY examples/config_example.yaml /etc/zhmc-os-forwarder/config.yaml
 
 # Install this package
 ENV TMP_DIR=/tmp/zhmc-os-forwarder

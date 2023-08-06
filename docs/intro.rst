@@ -63,8 +63,8 @@ Quickstart
   The config file tells the forwarder which HMC to use, and for which CPCs
   and LPARs it should forward to which syslog servers.
 
-  Download the :ref:`Example forwarder config file` as ``config.yaml`` and edit
-  that copy according to your environment.
+  Download the :ref:`Example forwarder config file` and edit that copy according
+  to your needs.
 
   For details, see :ref:`Forwarder config file`.
 
