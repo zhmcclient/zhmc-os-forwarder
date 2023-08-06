@@ -28,9 +28,17 @@ Released: not yet
 
 **Bug fixes:**
 
+* Improved the cleanup when exiting the forwarder to tolerate errors in
+  closing down with the HMC. The errors are logged and displayed, but the
+  cleanup continues.
+
 **Enhancements:**
 
 * Added documentation (issue #9)
+
+* Optimized the subscription for OS message notifications, by not
+  subscribing for OS message notifications for LPARs when opening the
+  OS message channel returns that the OS does not support it.
 
 **Cleanup:**
 

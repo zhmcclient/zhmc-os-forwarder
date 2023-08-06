@@ -155,16 +155,18 @@ class ForwarderServer:
                             "found in the existing topics for this session: "
                             "{t}".
                             format(p=lpar.name, c=cpc.name, t=topic_dicts))
-                if exc.http_status == 409 and exc.reason == 332:
+                elif exc.http_status == 409 and exc.reason == 332:
                     # The OS does not support OS messages.
                     logprint(logging.WARNING, PRINT_ALWAYS,
                              "Warning: The OS in LPAR {p!r} on CPC {c!r} does "
                              "not support OS messages - ignoring the LPAR".
                              format(p=lpar.name, c=cpc.name))
+                    os_topic = None
                 else:
                     raise
-            self.receiver.subscribe(os_topic)
-            lpar_info.topic = os_topic
+            if os_topic:
+                self.receiver.subscribe(os_topic)
+                lpar_info.topic = os_topic
 
             # Prepare sending to syslogs by creating Python loggers
             for syslog in self.forwarded_lpars.get_syslogs(lpar):
@@ -194,6 +196,7 @@ class ForwarderServer:
             handler = logging.handlers.SysLogHandler(
                 (syslog.host, syslog.port), facility_code,
                 socktype=socktype)
+        # pylint: disable=broad-exception-caught
         except Exception as exc:
             raise ConnectionError(
                 "Cannot create log handler for syslog server at "
@@ -212,52 +215,67 @@ class ForwarderServer:
         Stop the forwarder thread and clean up the forwarder server.
         """
 
-        try:
+        for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
+            lpar = lpar_info.lpar
+            cpc = lpar.manager.parent
 
-            for lpar_info in self.forwarded_lpars.forwarded_lpar_infos.values():
-                lpar = lpar_info.lpar
-                cpc = lpar.manager.parent
-
-                logprint(logging.INFO, PRINT_VV,
-                         "Unsubscribing OS message channel for LPAR {p!r} on "
-                         "CPC {c!r}".
-                         format(p=lpar.name, c=cpc.name))
+            logprint(logging.INFO, PRINT_VV,
+                     "Unsubscribing OS message channel for LPAR {p!r} on "
+                     "CPC {c!r}".
+                     format(p=lpar.name, c=cpc.name))
+            try:
                 self.receiver.unsubscribe(lpar_info.topic)
+            except zhmcclient.Error as exc:
+                logprint(logging.ERROR, PRINT_ALWAYS,
+                         "Error unsubscribing OS message channel for "
+                         "LPAR {p!r} on CPC {c!r}: {m}".
+                         format(p=lpar.name, c=cpc.name, m=exc))
 
+        try:
             logprint(logging.INFO, PRINT_ALWAYS,
                      "Closing notification receiver")
             self.receiver.close()
+        except zhmcclient.Error as exc:
+            logprint(logging.ERROR, PRINT_ALWAYS,
+                     "Error closing notification receiver: {m}".
+                     format(m=exc))
 
+        try:
             if self.thread:
                 logprint(logging.INFO, PRINT_ALWAYS,
                          "Stopping forwarder thread")
                 self._stop()
-
-            # logprint(logging.INFO, PRINT_ALWAYS,
-            #          "Cleaning up partition notifications on HMC")
-            # for lpar_tuple in self.forwarded_lpars.values():
-            #     lpar = lpar_tuple[0]
-            #     try:
-            #         lpar.disable_auto_update()
-            #     except zhmcclient.HTTPError as exc:
-            #         if exc.http_status == 403:
-            #             # The session does not exist anymore
-            #             pass
-
-            if self.session:
-                logprint(logging.INFO, PRINT_ALWAYS,
-                         "Closing session with HMC")
-                try:
-                    self.session.logoff()
-                except zhmcclient.HTTPError as exc:
-                    if exc.http_status == 403:
-                        # The session does not exist anymore
-                        pass
-                self.session = None
-
-        except zhmcclient.Error as exc:
+        # pylint: disable=broad-exception-caught
+        except Exception as exc:
             logprint(logging.ERROR, PRINT_ALWAYS,
-                     "Error when cleaning up: {}".format(exc))
+                     "Error stopping forwarder thread: {m}".
+                     format(m=exc))
+
+        # logprint(logging.INFO, PRINT_ALWAYS,
+        #          "Cleaning up partition notifications on HMC")
+        # for lpar_tuple in self.forwarded_lpars.values():
+        #     lpar = lpar_tuple[0]
+        #     try:
+        #         lpar.disable_auto_update()
+        #     except zhmcclient.HTTPError as exc:
+        #         if exc.http_status == 403:
+        #             # The session does not exist anymore
+        #             pass
+
+        if self.session:
+            logprint(logging.INFO, PRINT_ALWAYS,
+                     "Closing session with HMC")
+            try:
+                self.session.logoff()
+            except zhmcclient.HTTPError as exc:
+                if exc.http_status == 403:
+                    # The session does not exist anymore
+                    pass
+                else:
+                    logprint(logging.ERROR, PRINT_ALWAYS,
+                             "Error closing session with HMC: {m}".
+                             format(m=exc))
+            self.session = None
 
     def _start(self):
         """
