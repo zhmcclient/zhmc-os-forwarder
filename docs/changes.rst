@@ -34,6 +34,8 @@ Released: 2023-08-06
 * Improved cleanup by not attempting to unsubscribe from LPARs that were
   ignored. (issue #25)
 
+* Fixed safety issues from 2023-08-27.
+
 **Enhancements:**
 
 * Added documentation (issue #9)
