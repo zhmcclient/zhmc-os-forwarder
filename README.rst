@@ -19,8 +19,8 @@ IBM Z HMC OS Message Forwarder
     :target: https://pypi.python.org/pypi/zhmc-os-forwarder/
     :alt: Version on Pypi
 
-.. image:: https://github.com/zhmcclient/zhmc-os-forwarder/workflows/test/badge.svg?branch=master
-    :target: https://github.com/zhmcclient/zhmc-os-forwarder/actions?query=branch%3Amaster
+.. image:: https://github.com/zhmcclient/zhmc-os-forwarder/actions/workflows/test.yml/badge.svg?branch=master
+    :target: https://github.com/zhmcclient/zhmc-os-forwarder/actions/workflows/test.yml?query=branch%3Amaster
     :alt: Test status (master)
 
 .. image:: https://readthedocs.org/projects/zhmc-os-forwarder/badge/?version=latest
