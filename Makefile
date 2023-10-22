@@ -95,8 +95,6 @@ docker_registry := zhmcosforwarder
 
 python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{}.{}'.format(sys.version_info[0], sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py{}{}'.format(sys.version_info[0], sys.version_info[1]))")
-python_m_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}'.format(v=sys.version_info))")
-python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{v[0]}.{v[1]}'.format(v=sys.version_info))")
 
 package_dir := $(package_name)
 package_py_files := \
@@ -233,9 +231,6 @@ safety: safety_$(pymn).done
 
 .PHONY: check_reqs
 check_reqs: develop_$(pymn).done minimum-constraints.txt requirements.txt
-ifeq ($(python_m_version),2)
-	@echo "Makefile: Warning: Skipping the checking of missing dependencies on Python $(python_version)" >&2
-else
 	@echo "Makefile: Checking missing dependencies of this package"
 	pip-missing-reqs $(package_name) --requirements-file=requirements.txt
 	pip-missing-reqs $(package_name) --requirements-file=minimum-constraints.txt
@@ -248,23 +243,14 @@ else
 	@rc=0; for pkg in $(check_reqs_packages); do dir=$$($(PYTHON_CMD) -c "import $${pkg} as m,os; dm=os.path.dirname(m.__file__); d=dm if not dm.endswith('site-packages') else m.__file__; print(d)"); cmd="pip-missing-reqs $${dir} --requirements-file=minimum-constraints.txt"; echo $${cmd}; $${cmd}; rc=$$(expr $${rc} + $${?}); done; exit $${rc}
 	@echo "Makefile: Done checking missing dependencies of some development packages in our minimum versions"
 endif
-endif
 	@echo "Makefile: $@ done."
 
 safety_$(pymn).done: develop_$(pymn).done Makefile $(safety_policy_file) minimum-constraints.txt
-ifeq ($(python_m_version),2)
-	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
-else
-ifeq ($(python_mn_version),3.5)
-	@echo "Makefile: Warning: Skipping Safety on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Safety"
 	-$(call RM_FUNC,$@)
 	safety check --policy-file $(safety_policy_file) -r minimum-constraints.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
-endif
-endif
 
 .PHONY: test
 test: develop_$(pymn).done

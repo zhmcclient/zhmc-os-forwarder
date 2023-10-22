@@ -24,6 +24,9 @@ Released: not yet
 
 **Incompatible changes:**
 
+* Dropped support for Python 3.5. Python 3.5 went out of support by the PSF in
+  2020. (issue #40)
+
 **Deprecations:**
 
 **Bug fixes:**
