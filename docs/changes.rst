@@ -37,6 +37,11 @@ Released: not yet
 
 **Enhancements:**
 
+* Added support for Python 3.12. Had to increase the minimum versions of
+  setuptools to 66.1.0 and pip to 23.1.2 in order to address removal of the
+  long deprecated pkgutils.ImpImporter in Python 3.12, as well as several
+  packages used only for development. (issue #388)
+
 * Test: Moved check_reqs and safety in test workflow to the end, in order to
   still run the other test steps when these two fail.
 
