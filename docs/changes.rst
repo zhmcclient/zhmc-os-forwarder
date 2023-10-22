@@ -17,6 +17,35 @@ Change log
 ----------
 
 
+Version 0.3.0.dev1
+^^^^^^^^^^^^^^^^^^
+
+Released: not yet
+
+**Incompatible changes:**
+
+**Deprecations:**
+
+**Bug fixes:**
+
+* Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.s
+
+* Addressed safety issues up to 10/15.
+
+**Enhancements:**
+
+* Test: Moved check_reqs and safety in test workflow to the end, in order to
+  still run the other test steps when these two fail.
+
+**Cleanup:**
+
+**Known issues:**
+
+* See `list of open issues`_.
+
+.. _`list of open issues`: https://github.com/zhmcclient/zhmc-os-forwarder/issues
+
+
 Version 0.2.0
 ^^^^^^^^^^^^^
 
