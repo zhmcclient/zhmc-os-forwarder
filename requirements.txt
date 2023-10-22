@@ -19,8 +19,7 @@ jsonschema>=3.2.0
 # PyYAML 6.0 has wheel archives for Python 3.6 - 3.11
 # PyYAML 5.4 and 6.0.0 fails install since Cython 3 was released, see issue
 #   https://github.com/yaml/pyyaml/issues/724.
-PyYAML>=5.3.1; python_version <= '3.5'
-PyYAML>=5.3.1,!=5.4.0,!=5.4.1; python_version >= '3.6' and python_version <= '3.11'
+PyYAML>=5.3.1,!=5.4.0,!=5.4.1; python_version <= '3.11'
 PyYAML>=5.3.1,!=5.4.0,!=5.4.1,!=6.0.0; python_version >= '3.12'
 
 
@@ -31,5 +30,5 @@ PyYAML>=5.3.1,!=5.4.0,!=5.4.1,!=6.0.0; python_version >= '3.12'
 # required Python versions in the package metadata.
 # pyrsistent 0.15.0 fixes import errors on Python>=3.10, but only 0.18.1 has
 # Python 3.10 support (accordong to the change log).
-pyrsistent>=0.17.3; python_version <= '3.6'
+pyrsistent>=0.17.3; python_version == '3.6'
 pyrsistent>=0.18.1; python_version >= '3.7'
