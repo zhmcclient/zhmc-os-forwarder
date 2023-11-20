@@ -42,7 +42,7 @@ wheel==0.38.1; python_version >= '3.7'
 
 zhmcclient==1.10.0
 
-urllib3==1.26.5
+urllib3==1.26.18
 jsonschema==3.2.0
 PyYAML==5.3.1
 
