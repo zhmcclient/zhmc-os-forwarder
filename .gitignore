@@ -3,6 +3,7 @@
 
 # Make targets
 /*.done
+/done/*.done
 
 # Make build
 /build/
