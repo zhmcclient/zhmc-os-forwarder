@@ -33,7 +33,7 @@ Released: not yet
 
 * Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.s
 
-* Addressed safety issues up to 10/15.
+* Addressed safety issues up to 2023-11-26.
 
 **Enhancements:**
 
