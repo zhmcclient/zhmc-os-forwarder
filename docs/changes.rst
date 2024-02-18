@@ -54,6 +54,13 @@ Released: not yet
 * Test: Added Python 3.8 with latest package levels to normal tests because
   that is now the minimum version to run Sphinx. (related to issue #57)
 
+* Test: Added the option 'ignore-unpinned-requirements: False' to both
+  safety policy files because for safety 3.0, the default is to ignore
+  unpinned requirements (in requirements.txt).
+  Increased safety minimum version to 3.0 because the new option is not
+  tolerated by safety 2.x. Safety now runs only on Python >=3.7 because
+  that is what safetx 3.0 requires.
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
