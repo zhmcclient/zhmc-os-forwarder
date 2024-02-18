@@ -61,6 +61,9 @@ Released: not yet
   tolerated by safety 2.x. Safety now runs only on Python >=3.7 because
   that is what safetx 3.0 requires.
 
+* Test: Split safety runs into one against all requirements that may fail and
+  one against the install requirements that must succeed. (issue #54)
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
