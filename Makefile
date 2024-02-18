@@ -143,7 +143,8 @@ endif
 endif
 
 # Safety policy file
-safety_policy_file := .safety-policy.yml
+safety_install_policy_file := .safety-policy-install.yml
+safety_all_policy_file := .safety-policy-all.yml
 
 pytest_cov_opts := --cov $(package_name) --cov-config .coveragerc --cov-report=html:htmlcov
 
@@ -237,7 +238,7 @@ pylint: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: safety
-safety: $(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done
+safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: check_reqs
@@ -256,15 +257,26 @@ else
 endif
 	@echo "Makefile: $@ done."
 
-$(done_dir)/safety_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_policy_file) minimum-constraints.txt
+$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt
 ifeq ($(python_version),3.6)
 	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
 else
 	@echo "Makefile: Running Safety"
 	-$(call RM_FUNC,$@)
-	safety check --policy-file $(safety_policy_file) -r minimum-constraints.txt --full-report
+	-safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
+endif
+
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) requirements.txt
+ifeq ($(python_version),3.6)
+	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
+else
+	@echo "Makefile: Running Safety for install packages"
+	-$(call RM_FUNC,$@)
+	safety check --policy-file $(safety_install_policy_file) -r requirements.txt --full-report
+	echo "done" >$@
+	@echo "Makefile: Done running Safety for install packages"
 endif
 
 .PHONY: test
