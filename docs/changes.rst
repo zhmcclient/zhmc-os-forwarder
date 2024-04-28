@@ -41,6 +41,10 @@ Released: not yet
   Disabled Sphinx runs on Python <=3.7 in order to no longer having to deal
   with older Sphinx versions. (issue #57)
 
+* In the Github Actions test workflow for Python 3.6 and 3.7, changed
+  macos-latest back to macos-12 because macos-latest got upgraded from macOS 12
+  to macOS 14 which no longer supports these Python versions.
+
 **Enhancements:**
 
 * Added support for Python 3.12. Had to increase the minimum versions of
