@@ -31,9 +31,9 @@ Released: not yet
 
 **Bug fixes:**
 
-* Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.s
+* Addressed safety issues up to 2024-06-02.
 
-* Addressed safety issues up to 2023-02-18.
+* Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.s
 
 * Docs: Increased minimum Sphinx versions to 7.1.0 on Python 3.8 and to 7.2.0 on
   Python >=3.9 and adjusted dependent package versions in order to fix a version
