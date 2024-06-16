@@ -78,6 +78,9 @@ Released: not yet
 * Added support for a new make target 'authors' that generates an AUTHORS.md
   file from the git commit history. (issue #55)
 
+* Increased minimum version of zhmcclient package to 1.16.1 to pick up
+  fixes and enhancements.
+
 **Cleanup:**
 
 * Increased versions of GitHub Actions plugins to increase node.js runtime
