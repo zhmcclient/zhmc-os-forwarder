@@ -80,6 +80,9 @@ Released: not yet
 * Increased versions of GitHub Actions plugins to increase node.js runtime
   to version 20.
 
+* Converted README from from RST to MarkDown to fix badge formatting.
+  (issue #72)
+
 **Known issues:**
 
 * See `list of open issues`_.
