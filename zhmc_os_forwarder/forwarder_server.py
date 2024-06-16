@@ -183,7 +183,7 @@ class ForwarderServer:
                     logger = self._create_logger(syslog, logger_id)
                 except ConnectionError as exc:
                     logprint(logging.WARNING, PRINT_ALWAYS,
-                             "Warning: Skipping syslog server: {}".format(exc))
+                             f"Warning: Skipping syslog server: {exc}")
                     continue
                 logger_id += 1
                 syslog.logger = logger
@@ -214,7 +214,7 @@ class ForwarderServer:
                 format(host=syslog.host, port=syslog.port,
                        port_type=syslog.port_type, msg=str(exc)))
         handler.setFormatter(logging.Formatter('%(message)s'))
-        logger_name = 'zhmcosfwd_syslog_{}'.format(logger_id)
+        logger_name = f'zhmcosfwd_syslog_{logger_id}'
         logger = logging.getLogger(logger_name)
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)

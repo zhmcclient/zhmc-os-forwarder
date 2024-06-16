@@ -215,13 +215,13 @@ def zhmc_exceptions(session, config_filename):
                    hs=http_exc.http_status, hr=http_exc.reason))
         new_exc.__cause__ = None
         raise new_exc  # AuthError
-    except (IOError, OSError) as exc:
+    except OSError as exc:
         new_exc = OtherError(str(exc))
         new_exc.__cause__ = None
         raise new_exc  # OtherError
     except zhmcclient.Error as exc:
         new_exc = OtherError(
-            "Error returned from HMC at {}: {}".format(session.host, exc))
+            f"Error returned from HMC at {session.host}: {exc}")
         new_exc.__cause__ = None
         raise new_exc  # OtherError
 
@@ -252,7 +252,7 @@ def parse_yaml_file(yamlfile, name, schemafilename=None):
     """
 
     try:
-        with open(yamlfile, "r", encoding='utf-8') as fp:
+        with open(yamlfile, encoding='utf-8') as fp:
             yaml_obj = yaml.safe_load(fp)
     except FileNotFoundError as exc:
         new_exc = ImproperExit(
@@ -278,7 +278,7 @@ def parse_yaml_file(yamlfile, name, schemafilename=None):
         schemafile = os.path.join(
             os.path.dirname(__file__), 'schemas', schemafilename)
         try:
-            with open(schemafile, 'r', encoding='utf-8') as fp:
+            with open(schemafile, encoding='utf-8') as fp:
                 schema = yaml.safe_load(fp)
         except FileNotFoundError as exc:
             new_exc = ImproperExit(
@@ -329,12 +329,12 @@ def json_path_str(path_list):
     path_str = ""
     for p in path_list:
         if isinstance(p, int):
-            path_str += "[{}]".format(p)
+            path_str += f"[{p}]"
         else:
-            path_str += ".{}".format(p)
+            path_str += f".{p}"
     if path_str.startswith('.'):
         path_str = path_str[1:]
-    return "element '{}'".format(path_str)
+    return f"element '{path_str}'"
 
 
 def get_hmc_info(session):
@@ -386,7 +386,7 @@ def setup_logging(log_dest, log_complevels, syslog_facility):
         dest_str = None
     elif log_dest == 'stderr':
         dest_str = "the Standard Error stream"
-        logprint(None, PRINT_V, "Logging to {}".format(dest_str))
+        logprint(None, PRINT_V, f"Logging to {dest_str}")
         handler = logging.StreamHandler(stream=sys.stderr)
     elif log_dest == 'syslog':
         system = platform.system()
@@ -399,7 +399,7 @@ def setup_logging(log_dest, log_complevels, syslog_facility):
             address = SYSLOG_ADDRESS['other']
         dest_str = ("the System Log at address {a!r} with syslog facility "
                     "{slf!r}".format(a=address, slf=syslog_facility))
-        logprint(None, PRINT_V, "Logging to {}".format(dest_str))
+        logprint(None, PRINT_V, f"Logging to {dest_str}")
         try:
             facility = logging.handlers.SysLogHandler.facility_names[
                 syslog_facility]
@@ -416,8 +416,8 @@ def setup_logging(log_dest, log_complevels, syslog_facility):
         handler = logging.handlers.SysLogHandler(
             address=address, facility=facility)
     else:
-        dest_str = "file {fn}".format(fn=log_dest)
-        logprint(None, PRINT_V, "Logging to {}".format(dest_str))
+        dest_str = f"file {log_dest}"
+        logprint(None, PRINT_V, f"Logging to {dest_str}")
         try:
             handler = logging.FileHandler(log_dest)
         except OSError as exc:
@@ -480,7 +480,7 @@ def setup_logging(log_dest, log_complevels, syslog_facility):
                 logger_level_dict[logger_name] = level
 
         complevels = ', '.join(
-            ["{name}={level}".format(name=name, level=level)
+            [f"{name}={level}"
              for name, level in logger_level_dict.items()])
         logprint(None, PRINT_V,
                  "Logging components: {complevels}".
@@ -496,7 +496,7 @@ def setup_logging(log_dest, log_complevels, syslog_facility):
             # Example syslog message:
             #   <34>1 2003-10-11T22:14:15.003Z localhost MESSAGE
             # where MESSAGE is the formatted Python log message.
-            max_msg = '.{}'.format(2048 - 41 - 47)
+            max_msg = f'.{2048 - 41 - 47}'
         else:
             max_msg = ''
         fs = ('%(asctime)s %(levelname)s %(name)s: %(message){m}s'.

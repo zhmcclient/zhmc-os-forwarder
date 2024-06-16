@@ -149,18 +149,18 @@ def main():
                  "----------------")
 
         logprint(logging.INFO, PRINT_ALWAYS,
-                 "zhmc_os_forwarder version: {}".format(__version__))
+                 f"zhmc_os_forwarder version: {__version__}")
 
         # pylint: disable=no-member
         logprint(logging.INFO, PRINT_ALWAYS,
-                 "zhmcclient version: {}".format(zhmcclient.__version__))
+                 f"zhmcclient version: {zhmcclient.__version__}")
 
         logprint(logging.INFO, PRINT_ALWAYS,
-                 "Verbosity level: {}".format(utils.VERBOSE_LEVEL))
+                 f"Verbosity level: {utils.VERBOSE_LEVEL}")
 
         config_filename = args.c
         logprint(logging.INFO, PRINT_V,
-                 "Parsing forwarder config file: {}".format(config_filename))
+                 f"Parsing forwarder config file: {config_filename}")
         config_data = parse_yaml_file(
             config_filename, 'forwarder config file', 'config_schema.yaml')
 
@@ -175,7 +175,7 @@ def main():
             forwarder_server.startup()
         except zhmcclient.Error as exc:
             new_exc = ImproperExit(
-                "{}: {}".format(exc.__class__.__name__, exc))
+                f"{exc.__class__.__name__}: {exc}")
             new_exc.__cause__ = None  # pylint: disable=invalid-name
             raise new_exc
 
@@ -199,11 +199,11 @@ def main():
         exit_rc(1)
     except EarlyExit as exc:
         logprint(logging.ERROR, PRINT_ALWAYS,
-                 "Error: {}".format(exc))
+                 f"Error: {exc}")
         exit_rc(1)
     except ImproperExit as exc:
         logprint(logging.ERROR, PRINT_ALWAYS,
-                 "Error: {}".format(exc))
+                 f"Error: {exc}")
         if forwarder_server:
             forwarder_server.shutdown()
         exit_rc(1)
