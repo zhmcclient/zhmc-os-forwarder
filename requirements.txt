@@ -7,7 +7,7 @@
 # Direct dependencies for install (must be consistent with minimum-constraints-install.txt)
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
-zhmcclient>=1.10.0
+zhmcclient>=1.16.1
 
 urllib3>=1.26.18
 jsonschema>=3.2.0
@@ -25,9 +25,6 @@ PyYAML>=5.3.1,!=5.4.0,!=5.4.1,!=6.0.0; python_version >= '3.12'
 # Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
 
 # pyrsistent is pulled in by jsonschema.
-# Before its version 0.17.0, pyrsistent did not or not correctly declare its
-# required Python versions in the package metadata.
 # pyrsistent 0.15.0 fixes import errors on Python>=3.10, but only 0.18.1 has
 # Python 3.10 support (accordong to the change log).
-pyrsistent>=0.17.3; python_version == '3.6'
-pyrsistent>=0.18.1; python_version >= '3.7'
+pyrsistent>=0.18.1

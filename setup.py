@@ -68,7 +68,7 @@ package_version = get_version(
     os.path.join('zhmc_os_forwarder', '_version.py'))
 
 # Docs on setup():
-# * https://docs.python.org/2.7/distutils/apiref.html?
+# * https://docs.python.org/3.8/distutils/apiref.html?
 #   highlight=setup#distutils.core.setup
 # * https://setuptools.readthedocs.io/en/latest/setuptools.html#
 #   new-and-changed-setup-keywords
@@ -122,7 +122,7 @@ setuptools.setup(
 
     # Keep these Python versions in sync with:
     # - Section "Supported environments" in docs/intro.rst
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
@@ -130,8 +130,6 @@ setuptools.setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',

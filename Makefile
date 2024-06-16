@@ -98,7 +98,7 @@ package_name := zhmc_os_forwarder
 package_version := $(shell $(PYTHON_CMD) setup.py --version)
 docker_registry := zhmcosforwarder
 
-python_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{}.{}'.format(sys.version_info[0], sys.version_info[1]))")
+python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{}.{}'.format(sys.version_info[0], sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py{}{}'.format(sys.version_info[0], sys.version_info[1]))")
 
 package_dir := $(package_name)
@@ -137,15 +137,7 @@ doc_dependent_files := \
 done_dir := done
 
 # Packages whose dependencies are checked using pip-missing-reqs
-ifeq ($(python_version),3.6)
-  check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine
-else
-ifeq ($(python_version),3.7)
-  check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine safety
-else
   check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine safety sphinx
-endif
-endif
 
 # Safety policy file
 safety_install_policy_file := .safety-policy-install.yml
@@ -167,7 +159,7 @@ endif
 help:
 	@echo "Makefile for project $(package_name)"
 	@echo "Package version: $(package_version)"
-	@echo "Python version: $(python_version)"
+	@echo "Python version: $(python_mn_version)"
 	@echo "Targets:"
 	@echo "  install    - Install package and its prerequisites"
 	@echo "  develop    - Install prerequisites for development"
@@ -203,7 +195,7 @@ platform:
 	@echo "Make version: $(MAKE_VERSION)"
 	@echo "Python command name: $(PYTHON_CMD)"
 	@echo "Python command location: $(shell $(WHICH) $(PYTHON_CMD))"
-	@echo "Python version: $(python_version)"
+	@echo "Python version: $(python_mn_version)"
 	@echo "Pip command name: $(PIP_CMD)"
 	@echo "Pip command location: $(shell $(WHICH) $(PIP_CMD))"
 	@echo "Pip version: $(shell $(PIP_CMD) --version)"
@@ -263,26 +255,18 @@ endif
 	@echo "Makefile: $@ done."
 
 $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
-ifeq ($(python_version),3.6)
-	@echo "Makefile: Warning: Skipping Safety for all packages on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Safety"
 	-$(call RM_FUNC,$@)
 	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety"
-endif
 
 $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
-ifeq ($(python_version),3.6)
-	@echo "Makefile: Warning: Skipping Safety for install packages on Python $(python_version)" >&2
-else
 	@echo "Makefile: Running Safety for install packages"
 	-$(call RM_FUNC,$@)
 	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
-endif
 
 .PHONY: test
 test: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
@@ -358,18 +342,10 @@ $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/install_$(pymn)_$
 	@echo "Makefile: Done installing prerequisites for development"
 	echo "done" >$@
 
-# Boolean variable indicating that Sphinx should be run
-# We run Sphinx only on Python>=3.8 because lower Python versions require too old Sphinx versions
-run_sphinx := $(shell $(PYTHON_CMD) -c "import sys; py=sys.version_info[0:2]; sys.stdout.write('true' if py>=(3,8) else 'false')")
-
 $(doc_build_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_dependent_files)
-ifeq ($(run_sphinx),true)
 	@echo "Makefile: Generating HTML documentation with main file: $@"
 	sphinx-build -b html -v $(doc_dir) $(doc_build_dir)
 	@echo "Makefile: Done generating HTML documentation"
-else
-	@echo "Skipping Sphinx to create HTML documentation on Python version $(python_version)"
-endif
 
 # Note: distutils depends on the right files specified in MANIFEST.in, even when
 # they are already specified e.g. in 'package_data' in setup.py.
