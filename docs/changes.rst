@@ -44,6 +44,12 @@ Released: not yet
   macos-latest back to macos-12 because macos-latest got upgraded from macOS 12
   to macOS 14 which no longer supports these Python versions.
 
+* Docs: Fixed incorrect statement about port mapping in Docker container.
+  (issue #30)
+
+* Docs: Fixed incorrect link to change log.
+  (issue #30)
+
 **Enhancements:**
 
 * Changed development status of this package to "Beta".
@@ -75,7 +81,7 @@ Released: not yet
   minimum-constraints.txt file. (issue #64)
 
 * The safety run for all dependencies now must succeed when the test workflow
-  is run for a release (i.e. branch name 'release_...').
+  is run for a release (i.e. branch name 'release\_...').
 
 * Added support for a new make target 'authors' that generates an AUTHORS.md
   file from the git commit history. (issue #55)

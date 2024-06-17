@@ -158,11 +158,15 @@ the ``zhmc_os_forwarder`` command.
 
 The HMC userid must have the following permissions:
 
-* Object access permission to the following objects:
+* Object access permission to the following
+  objects:
+
   - LPARs for which OS messages should be forwarded
   - CPCs containing these LPARs
 
-* Task permission for the following tasks:
+* Task permission for the following
+  tasks:
+
   - "Operating System Messages" task (view-only mode is sufficient)
 
 
