@@ -34,7 +34,7 @@ importlib-metadata>=4.8.3
 colorama>=0.4.6
 
 # packaging is used by pytest, pip-check-reqs, sphinx
-packaging>=21.0
+packaging>=22.0
 
 # Coverage reporting (no imports, invoked via coveralls script):
 # coveralls 3.3.0 pins coverage to <7.0, causing pip backtracking to happen. Pinning
