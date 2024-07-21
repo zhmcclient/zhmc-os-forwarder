@@ -9,7 +9,7 @@
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 zhmcclient>=1.16.1
 
-urllib3>=1.26.18
+urllib3>=1.26.19
 jsonschema>=3.2.0
 
 # PyYAML pulled in by zhmcclient, dparse, python-coveralls
