@@ -4,4 +4,4 @@
 # Using this parameter requires coverage>=5.0
 relative_files = True
 
-omit = zhmc_os_forwarder/test.py
+# omit =
