@@ -161,7 +161,7 @@ help:
 	@echo "Package version: $(package_version)"
 	@echo "Python version: $(python_mn_version)"
 	@echo "Targets:"
-	@echo "  install    - Install package and its prerequisites"
+	@echo "  install    - Install package and its prerequisites (non-editable)"
 	@echo "  develop    - Install prerequisites for development"
 	@echo "  check_reqs - Perform missing dependency checks"
 	@echo "  check      - Perform flake8 checks"
@@ -340,9 +340,9 @@ $(done_dir)/install_base_$(pymn)_$(PACKAGE_LEVEL).done: minimum-constraints.txt 
 	echo "done" >$@
 
 $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/install_base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt minimum-constraints.txt minimum-constraints-install.txt setup.py
-	@echo "Makefile: Installing package and its prerequisites with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	@echo "Makefile: Installing package (non-editable) and its prerequisites with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	-$(call RM_FUNC,$@)
-	$(PYTHON_CMD) -m pip install $(pip_level_opts) -e .
+	$(PYTHON_CMD) -m pip install $(pip_level_opts) .
 	@echo "Makefile: Done installing package and its prerequisites"
 	echo "done" >$@
 
