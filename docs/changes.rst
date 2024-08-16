@@ -30,7 +30,7 @@ Released: not yet
 
 **Bug fixes:**
 
-* Addressed safety issues up to 2024-07-21.
+* Addressed safety issues up to 2024-08-16.
 
 * Test: Circumvented a pip-check-reqs issue by excluding its version 2.5.0.s
 
