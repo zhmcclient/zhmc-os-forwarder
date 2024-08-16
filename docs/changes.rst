@@ -26,6 +26,8 @@ Released: not yet
 
 * Dropped support for Python 3.5, 3.6, and 3.7. (issues #40, #74)
 
+* Dev: Changed 'make install' to install in non-editable mode.
+
 **Deprecations:**
 
 **Bug fixes:**
