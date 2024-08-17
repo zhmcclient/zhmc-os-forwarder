@@ -99,6 +99,15 @@ Released: not yet
 * Converted README from from RST to MarkDown to fix badge formatting.
   (issue #72)
 
+* Dev: Relaxed the conditions when safety issues are tolerated:
+  Issues in development dependencies are now tolerated in normal and scheduled
+  test workflow runs (but not in local make runs and release test workflow runs).
+  Issues in installation dependencies are now tolerated in normal test workflow
+  runs (but not in local make runs and scheduled/release test workflow runs).
+
+* Dev: Added to the release instructions a step to run the safety tool, and
+  to roll back any fixes for safety issues into any maintained stable branches.
+
 **Known issues:**
 
 * See `list of open issues`_.
