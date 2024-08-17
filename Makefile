@@ -40,9 +40,9 @@ ifndef PACKAGE_LEVEL
   PACKAGE_LEVEL := latest
 endif
 
-# Run type (normal, scheduled, release)
+# Run type (normal, scheduled, release, local)
 ifndef RUN_TYPE
-  RUN_TYPE := normal
+  RUN_TYPE := local
 endif
 
 # Determine OS platform make runs on.
@@ -256,16 +256,16 @@ endif
 	@echo "Makefile: $@ done."
 
 $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
-	@echo "Makefile: Running Safety"
+	@echo "Makefile: Running Safety for all packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
 	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' != 'release' || exit 1"
+	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
 	echo "done" >$@
-	@echo "Makefile: Done running Safety"
+	@echo "Makefile: Done running Safety for all packages"
 
 $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for install packages"
+	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
 	-$(call RM_FUNC,$@)
-	safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report
+	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
 
