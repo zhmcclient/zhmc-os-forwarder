@@ -206,7 +206,14 @@ local clone of the zhmc-os-forwarder Git repo.
 
     Roll back the PR into any maintained stable branches.
 
-4.  Create a topic branch for the version that is being released:
+4.  Check for any
+    `dependabot alerts <https://github.com/zhmcclient/python-zhmcclient/security/dependabot>`_.
+
+    If there are any dependabot alerts, fix them in a separate branch/PR.
+
+    Roll back the PR into any maintained stable branches.
+
+5.  Create a topic branch for the version that is being released:
 
     .. code-block:: sh
 
@@ -214,7 +221,7 @@ local clone of the zhmc-os-forwarder Git repo.
         git pull
         git checkout -b release_${MNU}
 
-5.  Edit the version file:
+6.  Edit the version file:
 
     .. code-block:: sh
 
@@ -226,7 +233,7 @@ local clone of the zhmc-os-forwarder Git repo.
 
         __version__ = 'M.N.U'
 
-6.  Edit the change log:
+7.  Edit the change log:
 
     .. code-block:: sh
 
@@ -244,20 +251,20 @@ local clone of the zhmc-os-forwarder Git repo.
       add text for any known issues you want users to know about.
     * Remove all empty list items.
 
-7.  Update the authors:
+8.  Update the authors:
 
     .. code-block:: sh
 
         make authors
 
-8.  Commit your changes and push the topic branch to the remote repo:
+9.  Commit your changes and push the topic branch to the remote repo:
 
     .. code-block:: sh
 
         git commit -asm "Release ${MNU}"
         git push --set-upstream origin release_${MNU}
 
-9.  On GitHub, create a Pull Request for branch ``release_M.N.U``.
+10. On GitHub, create a Pull Request for branch ``release_M.N.U``.
 
     Important: When creating Pull Requests, GitHub by default targets the
     ``master`` branch. When releasing based on a stable branch, you need to
@@ -272,19 +279,19 @@ local clone of the zhmc-os-forwarder Git repo.
     tests for all defined environments, since it discovers by the branch name
     that this is a PR for a release.
 
-10. On GitHub, once the checks for that Pull Request have succeeded, merge the
+11. On GitHub, once the checks for that Pull Request have succeeded, merge the
     Pull Request (no review is needed). This automatically deletes the branch
     on GitHub.
 
     If the PR did not succeed, fix the issues.
 
-11. On GitHub, close milestone ``M.N.U``.
+12. On GitHub, close milestone ``M.N.U``.
 
     Verify that the milestone has no open items anymore. If it does have open
     items, investigate why and fix. If the milestone does not have open items
     anymore, close the milestone.
 
-12. Publish the package
+13. Publish the package
 
     .. code-block:: sh
 
@@ -300,7 +307,7 @@ local clone of the zhmc-os-forwarder Git repo.
     Github, and finally creates a new stable branch on Github if the master
     branch was released.
 
-13. Verify the publishing
+14. Verify the publishing
 
     Wait for the "publish" workflow for the new release to have completed:
     https://github.com/zhmcclient/zhmc-os-forwarder/actions/workflows/publish.yml

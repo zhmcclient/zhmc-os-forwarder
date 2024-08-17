@@ -108,6 +108,9 @@ Released: not yet
 * Dev: Added to the release instructions a step to run the safety tool, and
   to roll back any fixes for safety issues into any maintained stable branches.
 
+* Dev: Added to the release instructions to check and fix dependabot issues,
+  and to roll back any fixes into any maintained stable branches.
+
 **Known issues:**
 
 * See `list of open issues`_.
