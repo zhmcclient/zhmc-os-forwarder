@@ -207,7 +207,7 @@ local clone of the zhmc-os-forwarder Git repo.
     Roll back the PR into any maintained stable branches.
 
 4.  Check for any
-    `dependabot alerts <https://github.com/zhmcclient/python-zhmcclient/security/dependabot>`_.
+    `dependabot alerts <https://github.com/zhmcclient/zhmc-os-forwarder/security/dependabot>`_.
 
     If there are any dependabot alerts, fix them in a separate branch/PR.
 
