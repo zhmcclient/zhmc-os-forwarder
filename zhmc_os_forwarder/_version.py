@@ -16,13 +16,27 @@
 Definition of the package version.
 """
 
-__all__ = ['__version__']
+# In the RTD docs build, _version_scm.py does not exist:
+try:
+    from ._version_scm import version, version_tuple
+except ImportError:
+    version = "unknown"
+    version_tuple = tuple("unknown")
 
-#: The full version of this package including any development levels, as a
-#: :term:`string`.
-#:
-#: Possible formats for this version string are:
-#:
-#: * "M.N.P.dev1": A not yet released version M.N.P
-#: * "M.N.P": A released version M.N.P
-__version__ = '1.0.0.dev1'
+__all__ = ['__version__', '__version_tuple__']
+
+# The full version of this package including any development levels, as a
+# string.
+#
+# Possible formats for this version string are:
+# * "M.N.Pa1.dev7+g1234567": A not yet released version M.N.P
+# * "M.N.P": A released version M.N.P
+__version__ = version
+
+# The full version of this package including any development levels, as a
+# tuple of version items, converted to integer where possible.
+#
+# Possible formats for this version tuple are:
+# * (M, N, P, 'a1', 'dev7', 'g1234567'): A not yet released version M.N.P
+# * (M, N, P): A released version M.N.P
+__version_tuple__ = version_tuple

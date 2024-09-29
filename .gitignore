@@ -8,6 +8,7 @@
 # Make build
 /build/
 /dist/
+/zhmc_os_forwarder/_version_scm.py
 /*.egg-info/
 /AUTHORS
 /ChangeLog

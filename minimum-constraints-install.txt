@@ -1,21 +1,19 @@
-# Pip constraints file for install dependencies.
-#
-# This file specifies constraints that match the minimum versions specified in
-# the requirement files for install. They are used for example when setting up
-# test environments with the minimum versions of any dependent packages.
-
-# Make sure that the package versions in minimum-constraints.txt are also
-# the minimum versions required in requirements.txt and dev-requirements.txt.
+# ------------------------------------------------------------------------------
+# Pip constraints file for minimum versions of packages needed for installation.
 
 
-# Base dependencies
+# ------------------------------------------------------------------------------
+# Base packages.
+# Must be consistent with requirements-base.txt.
 
 pip==23.3
 setuptools==70.0.0
-wheel==0.38.1
+wheel==0.41.3
 
 
-# Direct dependencies for install (must be consistent with requirements.txt)
+# ------------------------------------------------------------------------------
+# Direct dependencies for installation.
+# Must be consistent with requirements.txt.
 
 zhmcclient==1.16.1
 
@@ -24,12 +22,16 @@ jsonschema==3.2.0
 PyYAML==5.3.1
 
 
-# Indirect dependencies for install that are needed for some reason (must be consistent with requirements.txt)
+# ------------------------------------------------------------------------------
+# Indirect dependencies for installation that are needed for some reason.
+# Must be consistent with requirements.txt.
 
 pyrsistent==0.18.1
 
 
-# All other indirect dependencies for install that are not in requirements.txt
+# ------------------------------------------------------------------------------
+# All remaining dependencies for installation that are not in any other
+# requirements file.
 
 attrs==19.2.0
 certifi==2024.07.04
