@@ -34,10 +34,7 @@ Running in a Docker container
 -----------------------------
 
 If you want to run the forwarder in a Docker container you can create the
-container as follows, using the ``Dockerfile`` provided in the Git repository.
-
-Note that the provided ``Dockerfile`` can also be used as a starting point if
-you want to embed the forwarder in your own Docker/OCI image.
+container as follows, using the Dockerfile provided in the Git repository.
 
 * Clone the Git repository of the forwarder and switch to the clone's root
   directory:
@@ -53,8 +50,8 @@ you want to embed the forwarder in your own Docker/OCI image.
 
       $ make docker
 
-  This builds a container image named 'zhmcforwarder:latest' in your local Docker
-  environment.
+  This builds a container image named ``zhmc_os_forwarder:latest`` in your local
+  Docker environment.
 
   The image does not contain the forwarder config file, so that needs to be
   specified when starting the container.
@@ -63,7 +60,7 @@ you want to embed the forwarder in your own Docker/OCI image.
 
   .. code-block:: bash
 
-      $ docker run -it --rm -v $(pwd)/myconfig:/root/myconfig zhmcforwarder -p 514:514 -c /root/myconfig/config.yaml -v
+      $ docker run --rm -v $(pwd)/myconfig:/root/myconfig zhmc_os_forwarder -p 514:514 -c /root/myconfig/config.yaml -v
 
   In this command, the forwarder config file is provided on the local system
   as ``./myconfig/config.yaml``. The ``-v`` option of 'docker run' mounts the
@@ -73,8 +70,8 @@ you want to embed the forwarder in your own Docker/OCI image.
 
   The command above maps port 514 in the docker container to port 514 of the
   system running docker. That is the default port used by syslog. If your remote
-  syslog servers use different ports, they need to be mapped using the `-p` option
-  of the "docker run" command.
+  syslog servers use different ports, they need to be mapped using the ``-p`` option
+  of the ``docker run`` command.
 
 
 zhmc_os_forwarder command

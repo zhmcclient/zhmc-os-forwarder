@@ -1,0 +1,1 @@
+Improved building of the Docker container to reduce its size.
