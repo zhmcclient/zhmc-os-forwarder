@@ -144,11 +144,14 @@ check_py_files := \
 done_dir := done
 
 # Packages whose dependencies are checked using pip-missing-reqs
-check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 ruff pylint twine safety sphinx towncrier
+check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 ruff pylint twine safety bandit sphinx towncrier
 
 # Safety policy file
 safety_install_policy_file := .safety-policy-install.yml
 safety_all_policy_file := .safety-policy-all.yml
+
+# Bandit config file
+bandit_rc_file := .bandit.toml
 
 # Flake8 config file
 flake8_rc_file := .flake8
@@ -184,6 +187,7 @@ help:
 	@echo "  ruff       - Perform ruff checks (an alternate lint tool)"
 	@echo "  pylint     - Perform pylint checks"
 	@echo "  safety     - Run safety for install and all"
+	@echo "  bandit     - Run bandit checker"
 	@echo "  test       - Perform unit tests including coverage checker"
 	@echo "  build      - Build the distribution files in $(dist_dir)"
 	@echo "  builddoc   - Build the documentation in $(doc_build_dir)"
@@ -252,6 +256,10 @@ pylint: $(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done
 
 .PHONY: safety
 safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo "Makefile: $@ done."
+
+.PHONY: bandit
+bandit: $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: check_reqs
@@ -416,6 +424,13 @@ $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(
 	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
+
+$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(bandit_rc_file) $(check_py_files)
+	@echo "Makefile: Running Bandit"
+	-$(call RM_FUNC,$@)
+	bandit -c $(bandit_rc_file) -l $(check_py_files)
+	echo "done" >$@
+	@echo "Makefile: Done running Bandit"
 
 $(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore Makefile MANIFEST.in $(dist_included_files)
 	@echo "Makefile: Building Docker image $(docker_registry):latest"
