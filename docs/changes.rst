@@ -17,18 +17,16 @@ Change log
 ----------
 
 
-Version 0.3.0.dev1
-^^^^^^^^^^^^^^^^^^
+Version 0.3.0
+^^^^^^^^^^^^^
 
-Released: not yet
+Released: 2024-09-29
 
 **Incompatible changes:**
 
 * Dropped support for Python 3.5, 3.6, and 3.7. (issues #40, #74)
 
 * Dev: Changed 'make install' to install in non-editable mode.
-
-**Deprecations:**
 
 **Bug fixes:**
 
@@ -114,12 +112,6 @@ Released: not yet
 
 * Dev: Added to the release instructions to check and fix dependabot issues,
   and to roll back any fixes into any maintained stable branches.
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-os-forwarder/issues
 
 
 Version 0.2.0
