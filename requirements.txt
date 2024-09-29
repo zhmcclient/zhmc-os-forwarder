@@ -1,10 +1,13 @@
-# Pip requirements file for install dependencies.
-
+# ------------------------------------------------------------------------------
+# Pip requirements file for packages needed for installation.
+#
 # Note: The dependencies in this file will become the dependencies stated
 # in the Pypi package metadata.
 
 
-# Direct dependencies for install (must be consistent with minimum-constraints-install.txt)
+# ------------------------------------------------------------------------------
+# Direct dependencies for installation.
+# Must be consistent with minimum-constraints-install.txt.
 
 # zhmcclient @ git+https://github.com/zhmcclient/python-zhmcclient.git@master
 zhmcclient>=1.16.1
@@ -22,7 +25,9 @@ PyYAML>=5.3.1,!=5.4.0,!=5.4.1; python_version <= '3.11'
 PyYAML>=5.3.1,!=5.4.0,!=5.4.1,!=6.0.0; python_version >= '3.12'
 
 
-# Indirect dependencies for install that are needed for some reason (must be consistent with minimum-constraints-install.txt)
+# ------------------------------------------------------------------------------
+# Indirect dependencies for installation that are needed for some reason.
+# Must be consistent with minimum-constraints-install.txt.
 
 # pyrsistent is pulled in by jsonschema.
 # pyrsistent 0.15.0 fixes import errors on Python>=3.10, but only 0.18.1 has

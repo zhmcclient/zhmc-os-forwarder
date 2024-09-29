@@ -1,19 +1,14 @@
-# Pip constraints file for install and development dependencies.
+# ------------------------------------------------------------------------------
+# Pip constraints file for minimum versions of base packages and packages needed
+# for development.
 #
-# This file specifies constraints that match the minimum versions specified in
-# the requirement files for install and development. They are used for example
-# when setting up test environments with the minimum versions of any dependent
-# packages.
+# Note: Base packages are those needed for setting up an initial environment,
+# mainly to bring pip to a defined level.
 
 
-# Note: The included file is processed by Pip but ignored by the Safety tool.
-# Thus, safety with the 'all' profile actually only checks development packages,
-# but that's ok since the 'install' profile checks the install packages.
--c minimum-constraints-install.txt
-
-
-# Direct dependencies for development and indirect dependencies for development
-# that are needed for some reason (must be consistent with dev-requirements.txt)
+# ------------------------------------------------------------------------------
+# Direct and necessary iundirect dependencies for development.
+# Must be consistent with requirements-develop.txt.
 
 # PEP517 package builder, used in Makefile
 build==1.0.0
@@ -112,7 +107,9 @@ pip-check-reqs==2.5.1; python_version >= '3.12'
 importlib-resources==5.12.0; python_version <= '3.9'
 
 
-# Indirect dependencies for development that are not in dev-requirements.txt
+# ------------------------------------------------------------------------------
+# All remaining dependencies for development that are not in any other
+# requirements file.
 
 alabaster==0.7.9
 atomicwrites==1.4.0  # used with minimum package levels
