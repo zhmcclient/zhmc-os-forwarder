@@ -133,15 +133,31 @@ doc_dependent_files := \
 		examples/config_example.yaml \
     $(package_py_files) \
 
+# Source files for checks (with PyLint and Flake8, etc.)
+check_py_files := \
+    setup.py \
+    $(package_py_files) \
+    $(test_py_files) \
+    $(doc_dir)/conf.py \
+
 # Directory for .done files
 done_dir := done
 
 # Packages whose dependencies are checked using pip-missing-reqs
-  check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine safety sphinx towncrier
+check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 ruff pylint twine safety sphinx towncrier
 
 # Safety policy file
 safety_install_policy_file := .safety-policy-install.yml
 safety_all_policy_file := .safety-policy-all.yml
+
+# Flake8 config file
+flake8_rc_file := .flake8
+
+# Ruff config file
+ruff_rc_file := .ruff.toml
+
+# PyLint config file
+pylint_rc_file := .pylintrc
 
 pytest_cov_opts := --cov $(package_name) --cov-config .coveragerc --cov-report=html:htmlcov
 
@@ -165,6 +181,7 @@ help:
 	@echo "  develop    - Install prerequisites for development"
 	@echo "  check_reqs - Perform missing dependency checks"
 	@echo "  check      - Perform flake8 checks"
+	@echo "  ruff       - Perform ruff checks (an alternate lint tool)"
 	@echo "  pylint     - Perform pylint checks"
 	@echo "  safety     - Run safety for install and all"
 	@echo "  test       - Perform unit tests including coverage checker"
@@ -222,18 +239,16 @@ develop: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: check
-check: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo "Makefile: Performing flake8 checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
-	flake8 --config .flake8 $(package_py_files) $(test_py_files) setup.py $(doc_dir)/conf.py
-	@echo "Makefile: Done performing flake8 checks"
-	@echo "Makefile: $@ done."
+check: $(done_dir)/flake8_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo '$@ done.'
+
+.PHONY: ruff
+ruff: $(done_dir)/ruff_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo '$@ done.'
 
 .PHONY: pylint
-pylint: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo "Makefile: Performing pylint checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
-	pylint --rcfile=.pylintrc --disable=fixme $(package_py_files) $(test_py_files) setup.py $(doc_dir)/conf.py
-	@echo "Makefile: Done performing pylint checks"
-	@echo "Makefile: $@ done."
+pylint: $(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done
+	@echo '$@ done.'
 
 .PHONY: safety
 safety: $(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
@@ -254,20 +269,6 @@ else
 	@echo "Makefile: Done checking missing dependencies of some development packages in our minimum versions"
 endif
 	@echo "Makefile: $@ done."
-
-$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for all packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
-	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for all packages"
-
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
-	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for install packages"
 
 .PHONY: test
 test: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
@@ -382,6 +383,39 @@ $(bdist_file) $(sdist_file): _check_version $(done_dir)/develop_$(pymn)_$(PACKAG
 	-$(call RMDIR_FUNC,build $(package_name).egg-info .eggs)
 	$(PYTHON_CMD) -m build --outdir $(dist_dir)
 	@echo 'Done: Created distribution archives: $@'
+
+$(done_dir)/flake8_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(flake8_rc_file)
+	@echo "Makefile: Performing flake8 checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	flake8 --config $(flake8_rc_file) $(check_py_files)
+	echo "done" >$@
+	@echo "Makefile: Done performing flake8 checks"
+
+$(done_dir)/ruff_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(ruff_rc_file) $(check_py_files)
+	@echo "Makefile: Performing ruff checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	-$(call RM_FUNC,$@)
+	ruff check --unsafe-fixes --config $(ruff_rc_file) $(check_py_files)
+	echo "done" >$@
+	@echo "Makefile: Done performing ruff checks"
+
+$(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylint_rc_file) $(check_py_files)
+	@echo "Makefile: Performing pylint checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
+	pylint --rcfile=$(pylint_rc_file) --disable=fixme $(check_py_files)
+	echo "done" >$@
+	@echo "Makefile: Done performing pylint checks"
+
+$(done_dir)/safety_all_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_all_policy_file) minimum-constraints.txt minimum-constraints-install.txt
+	@echo "Makefile: Running Safety for all packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
+	-$(call RM_FUNC,$@)
+	bash -c "safety check --policy-file $(safety_all_policy_file) -r minimum-constraints.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
+	echo "done" >$@
+	@echo "Makefile: Done running Safety for all packages"
+
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
+	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
+	-$(call RM_FUNC,$@)
+	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
+	echo "done" >$@
+	@echo "Makefile: Done running Safety for install packages"
 
 $(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore Makefile MANIFEST.in $(dist_included_files)
 	@echo "Makefile: Building Docker image $(docker_registry):latest"
