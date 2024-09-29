@@ -14,6 +14,9 @@ build>=1.0.0
 virtualenv>=20.25.0
 pyproject-hooks>=1.1.0
 
+# Change log
+towncrier>=22.8.0
+
 # Safety CI by pyup.io
 safety>=3.0.1
 safety-schemas>=0.0.2
@@ -99,3 +102,6 @@ pipdeptree>=2.2.0
 # pip-check-reqs 2.5.0 has issue https://github.com/r1chardj0n3s/pip-check-reqs/issues/143
 pip-check-reqs>=2.4.3,!=2.5.0; python_version <= '3.11'
 pip-check-reqs>=2.5.1; python_version >= '3.12'
+
+# towncrier depends on importlib-resources>=5, which is included in Python starting with 3.10
+importlib-resources>=5.12.0; python_version <= '3.9'
