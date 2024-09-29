@@ -137,7 +137,7 @@ doc_dependent_files := \
 done_dir := done
 
 # Packages whose dependencies are checked using pip-missing-reqs
-  check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine safety sphinx
+  check_reqs_packages := pip_check_reqs pipdeptree build pytest coverage coveralls flake8 pylint twine safety sphinx towncrier
 
 # Safety policy file
 safety_install_policy_file := .safety-policy-install.yml

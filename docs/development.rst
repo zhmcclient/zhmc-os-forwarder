@@ -233,23 +233,23 @@ local clone of the zhmc-os-forwarder Git repo.
 
         __version__ = 'M.N.U'
 
-7.  Edit the change log:
+7.  Update the change log:
+
+    First make a dry-run to print the change log as it would be:
 
     .. code-block:: sh
 
-        vi docs/changes.rst
+        towncrier build --draft
 
-    and make the following changes in the section of the version that is being
-    released:
+    If you are satisfied with the change log, update the change log:
 
-    * Finalize the version.
-    * Change the release date to today's date.
-    * Make sure that all changes are described.
-    * Make sure the items shown in the change log are relevant for and
-      understandable by users.
-    * In the "Known issues" list item, remove the link to the issue tracker and
-      add text for any known issues you want users to know about.
-    * Remove all empty list items.
+    .. code-block:: sh
+
+        towncrier build --yes
+
+    This will update the change log file ``docs/changes.rst`` with the
+    information from the change fragment files in the ``changes`` directory, and
+    will delete these change fragment files.
 
 8.  Update the authors:
 
