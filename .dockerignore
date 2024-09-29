@@ -1,3 +1,5 @@
+# Note: /dist/ is needed in the docker build to access the distribution archive
+
 # User specific configuration files
 /myconfig/
 
@@ -10,7 +12,6 @@
 
 # Make build
 /build/
-/dist/
 /*.egg-info/
 /AUTHORS
 /ChangeLog

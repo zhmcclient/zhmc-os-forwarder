@@ -103,7 +103,9 @@ package_name := zhmc_os_forwarder
 # version indicator by 1.
 package_version := $(shell $(PYTHON_CMD) -m setuptools_scm)
 
-docker_registry := zhmcosforwarder
+# Docker image
+docker_image_name := zhmc_os_forwarder
+docker_image_tag := latest
 
 python_mn_version := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('{}.{}'.format(sys.version_info[0], sys.version_info[1]))")
 pymn := $(shell $(PYTHON_CMD) -c "import sys; sys.stdout.write('py{}{}'.format(sys.version_info[0], sys.version_info[1]))")
@@ -125,7 +127,7 @@ test_py_files := \
     $(wildcard $(test_dir)/*/*.py) \
 
 dist_dir := dist
-bdist_file := $(dist_dir)/$(package_name)-$(package_version)-py2.py3-none-any.whl
+bdist_file := $(dist_dir)/$(package_name)-$(package_version)-py3-none-any.whl
 sdist_file := $(dist_dir)/$(package_name)-$(package_version).tar.gz
 
 # Dependencies of the distribution archives. Since the $(version_file) is
@@ -136,7 +138,7 @@ dist_dependent_files := \
     LICENSE \
     README.md \
     requirements.txt \
-    $(package_py_files) \
+    $(filter-out $(version_file), $(package_py_files)) \
 
 doc_dir := docs
 doc_build_dir := build_docs
@@ -205,7 +207,7 @@ help:
 	@echo "  build      - Build the distribution files in $(dist_dir)"
 	@echo "  builddoc   - Build the documentation in $(doc_build_dir)"
 	@echo "  all        - Do all of the above"
-	@echo "  docker     - Build local Docker image in registry $(docker_registry)"
+	@echo "  docker     - Build local Docker image $(docker_image_name):$(docker_image_tag)"
 	@echo "  authors    - Generate AUTHORS.md file from git log"
 	@echo "  upload     - Upload the package to Pypi"
 	@echo "  clean      - Remove any temporary files"
@@ -381,7 +383,7 @@ $(doc_build_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_depen
 	sphinx-build -b html -v $(doc_dir) $(doc_build_dir)
 	@echo "Makefile: Done generating HTML documentation"
 
-$(sdist_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(dist_dependent_files)
+$(sdist_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(dist_dependent_files) $(version_file)
 	@echo "Makefile: Building the source distribution archive: $(sdist_file)"
 	$(PYTHON_CMD) -m build --sdist --outdir $(dist_dir) .
 	@echo "Makefile: Done building the source distribution archive: $(sdist_file)"
@@ -431,9 +433,11 @@ $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
 
-$(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore Makefile $(dist_dependent_files)
-	@echo "Makefile: Building Docker image $(docker_registry):latest"
+$(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore $(bdist_file)
+	@echo "Makefile: Building Docker image $(docker_image_name):$(docker_image_tag)"
 	-$(call RM_FUNC,$@)
-	docker build -t $(docker_registry):latest .
+	docker build --tag $(docker_image_name):$(docker_image_tag) --build-arg bdist_file=$(bdist_file) --build-arg package_version=$(subst +,.,$(package_version)) --build-arg build_date="$(shell date -Iseconds)" --build-arg git_commit="$(shell git rev-parse HEAD)" .
+	docker run --rm $(docker_image_name):$(docker_image_tag) --version
+	docker image list --filter reference=$(docker_image_name)
 	@echo "Makefile: Done building Docker image"
 	echo "done" >$@
