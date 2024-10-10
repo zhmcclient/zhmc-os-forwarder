@@ -137,6 +137,7 @@ dist_dependent_files := \
     pyproject.toml \
     LICENSE \
     README.md \
+    AUTHORS.md \
     requirements.txt \
     $(filter-out $(version_file), $(package_py_files)) \
 
@@ -254,6 +255,9 @@ _check_version:
 ifeq (,$(package_version))
 	$(error Package version could not be determined)
 endif
+
+.PHONY: _always
+_always:
 
 .PHONY: install
 install: $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done
@@ -414,14 +418,23 @@ docker: _check_version $(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: authors
-authors: _check_version
-	echo "# Authors of this project" >AUTHORS.md
-	echo "" >>AUTHORS.md
-	echo "Sorted list of authors derived from git commit history:" >>AUTHORS.md
-	echo '```' >>AUTHORS.md
-	git shortlog --summary --email | cut -f 2 | sort >>AUTHORS.md
-	echo '```' >>AUTHORS.md
-	@echo '$@ done.'
+authors: AUTHORS.md
+	@echo "Makefile: $@ done."
+
+# Make sure the AUTHORS.md file is up to date but has the old date when it did
+# not change to prevent redoing dependent targets. In GitHub Actions, the
+# 'git shortlog' command does not return authors anymore since around 8/2024.
+# This is tolerated by leaving the file unchanged.
+AUTHORS.md: _always
+	echo "# Authors of this project" >AUTHORS.md.tmp
+	echo "" >>AUTHORS.md.tmp
+	echo "Sorted list of authors derived from git commit history:" >>AUTHORS.md.tmp
+	echo '```' >>AUTHORS.md.tmp
+	sh -c "git shortlog --summary --email | cut -f 2 | sort >log.tmp"
+	sh -c "cat log.tmp >>AUTHORS.md.tmp"
+	echo '```' >>AUTHORS.md.tmp
+	sh -c "if ! grep -q '[^[:space:]]' log.tmp; then echo 'Warning - git shortlog does not display any authors - leaving AUTHORS.md file unchanged'; else if ! diff -q AUTHORS.md.tmp AUTHORS.md; then echo 'Updating AUTHORS.md as follows:'; diff AUTHORS.md.tmp AUTHORS.md; mv AUTHORS.md.tmp AUTHORS.md; else echo 'AUTHORS.md was already up to date'; fi; fi"
+	sh -c "rm -f log.tmp AUTHORS.md.tmp"
 
 .PHONY: clean
 clean:
