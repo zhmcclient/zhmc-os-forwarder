@@ -23,6 +23,66 @@ Change log
 .. ============================================================================
 
 .. towncrier start
+Version 1.0.0
+^^^^^^^^^^^^^
+
+Released: 2024-10-10
+
+**Incompatible changes:**
+
+* Changed mage name of Docker container image from 'zhmcosforwarder' to
+  'zhmc_os_forwarder' to match the command name. (`#100 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/100>`_)
+
+**Bug fixes:**
+
+* Dev: Fixed checks and missing removal of temp file in make targets for releasing
+  and starting a version.
+
+* Dev: In the make commands to create/update AUTHORS.md, added a reftag to the
+  'git shortlog' command to fix the issue that without a terminal (e.g. in GitHub
+  Actions), the command did not display any authors.
+
+* Fixed incorrect check for start branch in 'make start_tag'. (`#114 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/114>`_)
+
+**Enhancements:**
+
+* Dev: Automatically update AUTHORS.md when building the distribution archives.
+
+* Migrated to pyproject.toml. (`#80 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/80>`_)
+
+* Migrated to using towncrier for managing change logs. (`#81 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/81>`_)
+
+* Added support for running the 'ruff' checker via "make ruff" and added that
+  to the test workflow. (`#82 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/82>`_)
+
+* Added support for running the 'bandit' checker with a new make target
+  'bandit', and added that to the GitHub Actions test workflow.
+  Adjusted the code in order to pass the bandit check. (`#83 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/83>`_)
+
+* Support for and test of Python 3.13.0-rc.1. Needed to increase the minimum
+  versions of PyYAML to 6.0.2 and pyrsistent to 0.20.0. (`#84 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/84>`_)
+
+* Test: Added tests for Python 3.13 (final version). (`#85 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/85>`_)
+
+* Dev: Encapsulated the releasing of a version to PyPI into new 'release_branch'
+  and 'release_publish' make targets. See the development documentation for
+  details. (`#97 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/97>`_)
+
+* Dev: Encapsulated the starting of a new version into new 'start_branch' and
+  'start_tag' make targets. See the development documentation for details. (`#97 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/97>`_)
+
+* Improved building of the Docker container to reduce its size. (`#100 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/100>`_)
+
+* Increased zhmcclient to 1.18.0 to pick up fixes. (`#111 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/111>`_)
+
+**Cleanup:**
+
+* Dev: Dropped the 'make upload' target, because the release to PyPI has
+  been migrated to using a publish workflow. (`#97 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/97>`_)
+
+* Resolved most warnings in test and publish workflows. (`#102 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/102>`_)
+
+
 Version 0.3.0
 ^^^^^^^^^^^^^
 
