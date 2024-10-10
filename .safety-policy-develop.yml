@@ -30,12 +30,6 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-        51457:
-            reason: Py package is no longer being fixed (latest version 1.11.0)
-        # 64227:
-        #     reason: Fixed Jinja2 version 3.1.3 requires Python>=3.7 and is used there
-        # 68477:
-        #     reason: Fixed virtualenv version 20.21.0 requires Python>=3.7 and is used there
         70612:
             reason: Disputed issue in Jinja2 version 3.1.3 - No known fix
 
