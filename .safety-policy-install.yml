@@ -26,20 +26,6 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-        39611:
-            reason: PyYAML full_load method or FullLoader is not used
-        # 51499:
-        #     reason: Fixed Wheel version requires Python>=3.7 and is used there; Risk is on Pypi side
-        # 52495:
-        #     reason: Fixed Setuptools version requires Python>=3.7 and is used there; Risk is on Pypi side
-        # 58755:
-        #     reason: Fixed requests version 2.31.0 requires Python>=3.7 and is used there
-        # 62044:
-        #     reason: Fixed pip version 23.3 requires Python>=3.7 and is used there
-        # 67884:
-        #     reason: Fixed stomp-py version 8.1.1 requires Python>=3.7 and is used there
-        # 67894:
-        #     reason: Fixed stomp-py version 8.1.1 requires Python>=3.7 and is used there
 
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
