@@ -16,31 +16,13 @@
 Change log
 ----------
 
+.. ============================================================================
+..
+.. Do not add change records here directly, but create fragment files instead!
+..
+.. ============================================================================
 
-Version 1.0.0.dev1
-^^^^^^^^^^^^^^^^^^
-
-This version contains all fixes up to version 0.3.x.
-
-Released: not yet
-
-**Incompatible changes:**
-
-**Deprecations:**
-
-**Bug fixes:**
-
-**Enhancements:**
-
-**Cleanup:**
-
-**Known issues:**
-
-* See `list of open issues`_.
-
-.. _`list of open issues`: https://github.com/zhmcclient/zhmc-os-forwarder/issues
-
-
+.. towncrier start
 Version 0.3.0
 ^^^^^^^^^^^^^
 
