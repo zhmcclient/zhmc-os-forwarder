@@ -1,2 +1,0 @@
-Changed mage name of Docker container image from 'zhmcosforwarder' to
-'zhmc_os_forwarder' to match the command name.
