@@ -23,6 +23,21 @@ Change log
 .. ============================================================================
 
 .. towncrier start
+Version 1.0.1
+^^^^^^^^^^^^^
+
+Released: 2025-01-12
+
+**Bug fixes:**
+
+* Addressed safety issues up to 2025-01-12.
+
+**Cleanup:**
+
+* Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using ubuntu-22.04
+  as the OS image for Python 3.8 based test runs.
+
+
 Version 1.0.0
 ^^^^^^^^^^^^^
 
