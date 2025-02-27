@@ -6,7 +6,7 @@
 # Base packages.
 # Must be consistent with requirements-base.txt.
 
-pip==23.3
+pip==25.0
 setuptools==70.0.0
 wheel==0.41.3
 
