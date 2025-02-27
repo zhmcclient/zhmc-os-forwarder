@@ -123,6 +123,7 @@ Jinja2==3.1.5
 keyring==18.0.0
 levenshtein==0.25.1
 more-itertools==8.0.0  # used with minimum package levels
+nltk==3.9
 pkginfo==1.4.2
 pyparsing==2.4.5
 requests-toolbelt==0.8.0
