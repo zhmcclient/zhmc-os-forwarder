@@ -18,17 +18,114 @@ Usage
 This section describes how to use the forwarder beyond the quick introduction
 in :ref:`Quickstart`.
 
+Installation using pipx
+-----------------------
 
-Running on a system
--------------------
+The recommended way to install the exporter is by using pipx.
 
-If you want to run the forwarder on some system (e.g. on your workstation for
-trying it out), it is recommended to use a virtual Python environment.
+Pipx creates a `virtual Python environment`_ under the covers, installs the
+Python package into that environment and makes the ``zhmc_os_forwarder``
+command available in a directory that is in the PATH.
+The ``zhmc_os_forwarder`` command will be available that way, regardless
+of whether or not you have a virtual Python environment active (that you may
+need for other purposes).
 
-With the virtual Python environment active, follow the steps in
-:ref:`Quickstart` to install, establish the required files, and to run the
-forwarder.
+1.  Prerequisite: Install pipx as an OS-level package
 
+    Follow the steps at https://pipx.pypa.io/stable/installation/ to install
+    pipx as an OS-level package to your local system.
+
+2.  Install the exporter using pipx
+
+    To install the latest released version of the exporter:
+
+    .. code-block:: bash
+
+        $ pipx install zhmc-os-forwarder
+
+    To install a specific released version of the exporter, e.g. 1.0.0:
+
+    .. code-block:: bash
+
+        $ pipx install zhmc-os-forwarder==1.0.0
+
+    To install a specific development branch of the exporter, e.g. master:
+
+    .. code-block:: bash
+
+        $ pipx install git+https://github.com/zhmcclient/zhmc-os-forwarder.git@master
+
+    To install the exporter with a non-default Python version, e.g. 3.10:
+
+    .. code-block:: bash
+
+        $ pipx install zhmc-os-forwarder --python python3.10
+
+Installation into a virtual Python environment
+----------------------------------------------
+
+In some cases it may be useful to install the exporter into your own
+`virtual Python environment`_. That avoids the dependency to pipx, but it
+requires you to activate the virtual environment every time you want to use the
+``zhmc_os_forwarder`` command.
+
+There is a number of ways how virtual Python environments can be created. This
+documentation describes the use of "virtualenv":
+
+1.  Prerequisite: Install virtualenv into system Python:
+
+    .. code-block:: bash
+
+        $ pip install virtualenv
+
+2.  Create and activate a virtual Python environment:
+
+    .. code-block:: bash
+
+        $ virtualenv ~/.virtualenvs/zhmcpe
+        $ source ~/.virtualenvs/zhmcpe/bin/activate
+
+3.  Install the exporter into the virtual Python environment:
+
+    To install the latest released version of the exporter so that it uses your
+    default Python version:
+
+    .. code-block:: bash
+
+        (zhmcpe) $ pip install zhmc-os-forwarder
+
+    To install a specific released version of the exporter, e.g. 1.0.0:
+
+    .. code-block:: bash
+
+        (zhmcpe) $ pip install zhmc-os-forwarder==1.0.0
+
+    To install a specific development branch of the exporter, e.g. master:
+
+    .. code-block:: bash
+
+        (zhmcpe) $ pip install git+https://github.com/zhmcclient/zhmc-os-forwarder.git@master
+
+Installation into a system Python
+---------------------------------
+
+Your system Python version(s) are installed using OS-level packages for all the
+Python functionality.
+
+Adding packages to your system Python using Python packages from `Pypi`_ may
+create issues. This is why recent versions of pip raise a warning when
+attempting to install into the system Python. Even if you install a Python
+package from Pypi into your user's space, this may create issues.
+
+The main issue is that the more Python packages you install into the system
+Python, the more likely there will be incompatible Python package dependencies.
+
+Another issue is when you replace OS-level packages with Python packages.
+
+In order to avoid these issues, you should install the exporter into the system
+Python only in cases where the system has a well-defined scope and you have
+full control over the set of OS-level and Python-level packages, for example
+when building a Docker container.
 
 Running in a Docker container
 -----------------------------

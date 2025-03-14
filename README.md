@@ -31,11 +31,18 @@ duplicating any messages.
 
 # Quickstart
 
-- Install the forwarder and all of its Python dependencies as follows:
+- If not yet available, install the "pipx" command as described in
+  https://pipx.pypa.io/stable/installation/.
+
+- Without having any virtual Python environment active, install the log
+  forwarder as follows:
 
   ``` bash
-  $ pip install zhmc-os-forwarder
+  $ pipx install zhmc-os-forwarder
   ```
+
+  That makes the `zhmc_os_forwarder` command available in the PATH, without
+  having to activate any virtual Python environment.
 
 - Provide a *config file* for use by the forwarder.
 
