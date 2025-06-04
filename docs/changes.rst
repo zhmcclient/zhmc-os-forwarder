@@ -23,6 +23,37 @@ Change log
 .. ============================================================================
 
 .. towncrier start
+Version 1.1.0
+^^^^^^^^^^^^^
+
+Released: 2025-06-04
+
+**Bug fixes:**
+
+* Fixed missing package dependencies for development.
+
+* Addressed safety issues up to 2025-06-04.
+
+* Dev: Fixed towncrier change log check in release_branch make target.
+
+* Dev: Added handling of HTTP error 422 when creating a new stable branch in
+  the GitHub Actions publish workflow.
+
+* Docs: Fixed supported Python versions in readme file. (`#123 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/123>`_)
+
+**Enhancements:**
+
+* Added check for incorrectly named towncrier change fragment files.
+
+* Dev: Started using the trusted publisher concept of Pypi in order to avoid
+  dealing with Pypi access tokens. (`#146 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/146>`_)
+
+**Cleanup:**
+
+* Accommodated rollout of Ubuntu 24.04 on GitHub Actions by using ubuntu-22.04
+  as the OS image for Python 3.8 based test runs.
+
+
 Version 1.0.0
 ^^^^^^^^^^^^^
 
