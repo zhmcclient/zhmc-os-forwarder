@@ -1,0 +1,1 @@
+Docs: Fixed supported Python versions in readme file.
