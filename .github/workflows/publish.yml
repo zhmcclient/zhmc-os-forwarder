@@ -192,11 +192,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
     - name: Wait some time if HTTP error 422
-      if: steps.set-is-master-branch.outputs.result == 'true' and steps.create-stable-branch.outputs.status == 422
+      if: steps.set-is-master-branch.outputs.result == 'true' && steps.create-stable-branch.outputs.status == 422
       run: |
         sleep 10
     - name: Retry create new stable branch when releasing master branch if HTTP error 422
-      if: steps.set-is-master-branch.outputs.result == 'true' and steps.create-stable-branch.outputs.status == 422
+      if: steps.set-is-master-branch.outputs.result == 'true' && steps.create-stable-branch.outputs.status == 422
       id: create-stable-branch-2
       uses: actions/github-script@v7
       with:
@@ -211,7 +211,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
     - name: Handle HTTP error 422 from creating the new stable branch
-      if: steps.set-is-master-branch.outputs.result == 'true' and steps.create-stable-branch-2.outputs.status == 422
+      if: steps.set-is-master-branch.outputs.result == 'true' && steps.create-stable-branch-2.outputs.status == 422
       run: |
         echo "Error: Creating the new stable branch ${{ steps.set-stable-branch.outputs.result }} failed twice, but the publish still succeeded. Create the new stable branch manually:"
         echo "git checkout master"
