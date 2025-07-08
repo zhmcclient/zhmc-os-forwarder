@@ -139,7 +139,7 @@ dist_dependent_files := \
     README.md \
     AUTHORS.md \
     requirements.txt \
-    $(filter-out $(version_file), $(package_py_files)) \
+    $(package_py_files) \
 
 doc_dir := docs
 doc_build_dir := build_docs
@@ -219,14 +219,14 @@ help:
 	@echo "  clobber    - Remove any build products"
 	@echo "  platform   - Display the information about the platform as seen by make"
 	@echo "  env        - Display the environment as seen by make"
-	@echo 'Environment variables:'
+	@echo "Environment variables:"
 	@echo "  PACKAGE_LEVEL - Package level to be used for installing dependent Python"
 	@echo "      packages in 'install' and 'develop' targets:"
 	@echo "        latest - Latest package versions available on Pypi"
 	@echo "        minimum - A minimum version as defined in minimum-constraints-develop.txt"
 	@echo "      Optional, defaults to 'latest'."
-	@echo '  PYTHON_CMD=... - Name of python command. Default: python'
-	@echo '  PIP_CMD=... - Name of pip command. Default: pip'
+	@echo "  PYTHON_CMD=... - Name of python command. Default: python"
+	@echo "  PIP_CMD=... - Name of pip command. Default: pip"
 	@echo "  VERSION=... - M.N.U version to be released or started"
 	@echo "  BRANCH=... - Name of branch to be released or started (default is derived from VERSION)"
 
@@ -278,15 +278,15 @@ develop: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 
 .PHONY: check
 check: $(done_dir)/flake8_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: ruff
 ruff: $(done_dir)/ruff_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: pylint
 pylint: $(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done
-	@echo '$@ done.'
+	@echo "Makefile: $@ done."
 
 .PHONY: safety
 safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
@@ -458,83 +458,83 @@ clobber: clean
 	-$(call RM_R_FUNC,*.done)
 	@echo "Makefile: $@ done."
 
-$(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: minimum-constraints-develop.txt minimum-constraints-install.txt requirements-base.txt
+$(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done: Makefile minimum-constraints-develop.txt minimum-constraints-install.txt requirements-base.txt
 	@echo "Makefile: Installing base packages with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	-$(call RM_FUNC,$@)
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-base.txt
 	@echo "Makefile: Done installing base packages"
 	echo "done" >$@
 
-$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt minimum-constraints-develop.txt minimum-constraints-install.txt pyproject.toml
+$(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements.txt minimum-constraints-develop.txt minimum-constraints-install.txt $(dist_dependent_files)
 	@echo "Makefile: Installing package (non-editable) and its prerequisites with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	-$(call RM_FUNC,$@)
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) .
 	@echo "Makefile: Done installing package and its prerequisites"
 	echo "done" >$@
 
-$(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/install_$(pymn)_$(PACKAGE_LEVEL).done requirements-develop.txt minimum-constraints-develop.txt minimum-constraints-install.txt
+$(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/base_$(pymn)_$(PACKAGE_LEVEL).done requirements-develop.txt minimum-constraints-develop.txt minimum-constraints-install.txt
 	@echo "Makefile: Installing prerequisites for development with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	-$(call RM_FUNC,$@)
 	$(PYTHON_CMD) -m pip install $(pip_level_opts) -r requirements-develop.txt
 	@echo "Makefile: Done installing prerequisites for development"
 	echo "done" >$@
 
-$(doc_build_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_dependent_files)
+$(doc_build_file): Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(doc_dependent_files)
 	@echo "Makefile: Generating HTML documentation with main file: $@"
 	sphinx-build -b html -v $(doc_dir) $(doc_build_dir)
 	@echo "Makefile: Done generating HTML documentation"
 
-$(sdist_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(dist_dependent_files) $(version_file)
+$(sdist_file): Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
 	@echo "Makefile: Building the source distribution archive: $(sdist_file)"
 	$(PYTHON_CMD) -m build --sdist --outdir $(dist_dir) .
 	@echo "Makefile: Done building the source distribution archive: $(sdist_file)"
 
-$(bdist_file) $(version_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(dist_dependent_files)
+$(bdist_file) $(version_file): $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(dist_dependent_files)
 	@echo "Makefile: Building the wheel distribution archive: $(bdist_file)"
 	$(PYTHON_CMD) -m build --wheel --outdir $(dist_dir) -C--universal .
 	@echo "Makefile: Done building the wheel distribution archive: $(bdist_file)"
 
-$(done_dir)/flake8_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(flake8_rc_file) $(check_py_files)
+$(done_dir)/flake8_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(flake8_rc_file) $(check_py_files)
 	@echo "Makefile: Performing flake8 checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	flake8 --config $(flake8_rc_file) $(check_py_files)
 	echo "done" >$@
 	@echo "Makefile: Done performing flake8 checks"
 
-$(done_dir)/ruff_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(ruff_rc_file) $(check_py_files)
+$(done_dir)/ruff_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(ruff_rc_file) $(check_py_files)
 	@echo "Makefile: Performing ruff checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	-$(call RM_FUNC,$@)
 	ruff check --unsafe-fixes --config $(ruff_rc_file) $(check_py_files)
 	echo "done" >$@
 	@echo "Makefile: Done performing ruff checks"
 
-$(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylint_rc_file) $(check_py_files)
+$(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(pylint_rc_file) $(check_py_files)
 	@echo "Makefile: Performing pylint checks with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
 	pylint --rcfile=$(pylint_rc_file) --disable=fixme $(check_py_files)
 	echo "done" >$@
 	@echo "Makefile: Done performing pylint checks"
 
-$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_develop_policy_file) minimum-constraints-develop.txt
+$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) minimum-constraints-develop.txt
 	@echo "Makefile: Running Safety for development packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
 	-$(call RM_FUNC,$@)
 	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for development packages"
 
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
+$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
 	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
 	-$(call RM_FUNC,$@)
 	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	echo "done" >$@
 	@echo "Makefile: Done running Safety for install packages"
 
-$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(bandit_rc_file) $(check_py_files)
+$(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(bandit_rc_file) $(check_py_files)
 	@echo "Makefile: Running Bandit"
 	-$(call RM_FUNC,$@)
 	bandit -c $(bandit_rc_file) -l $(check_py_files)
 	echo "done" >$@
 	@echo "Makefile: Done running Bandit"
 
-$(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore $(bdist_file)
+$(done_dir)/docker_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Dockerfile .dockerignore $(bdist_file)
 	@echo "Makefile: Building Docker image $(docker_image_name):$(docker_image_tag)"
 	-$(call RM_FUNC,$@)
 	docker build --tag $(docker_image_name):$(docker_image_tag) --build-arg bdist_file=$(bdist_file) --build-arg package_version=$(subst +,.,$(package_version)) --build-arg build_date="$(shell date -Iseconds)" --build-arg git_commit="$(shell git rev-parse HEAD)" .
