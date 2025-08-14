@@ -47,4 +47,4 @@ requests==2.32.4
 six==1.16.0
 stomp.py==8.1.1
 typing-extensions==4.12.2
-zipp==3.19.1
+zipp==3.20.0
