@@ -7,7 +7,7 @@
 #
 #   docker run --rm -v $(pwd)/myconfig:/root/myconfig -p 514:514 zhmc_os_forwarder -c /root/myconfig/config.yaml -v
 
-FROM python:3.12-alpine as builder
+FROM python:3.13-alpine as builder
 
 # Path name of binary distribution archive of zhmc-os-forwarder package
 ARG bdist_file
@@ -42,7 +42,7 @@ RUN echo "Files in rpds Python package:" \
 # the C library of the builder OS used in the first stage of this Dockerfile.
 # Therefore, the OS used in the final stage needs to be compatible with the
 # builder OS. We use the same OS image to make sure.
-FROM python:3.12-alpine
+FROM python:3.13-alpine
 
 # Version of the zhmc-os-forwarder package
 ARG package_version
