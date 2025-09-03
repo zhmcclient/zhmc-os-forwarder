@@ -59,7 +59,7 @@ provide the actual information on what is wrong.
 
 You can also check the `YAML specification`_.
 
-.. _YAML specification: http://yaml.org/spec/1.2/spec.html
+.. _YAML specification: https://yaml.org/spec/1.2/spec.html
 
 Forwarder config file does not validate
 ---------------------------------------
