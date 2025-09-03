@@ -15,22 +15,6 @@
 Introduction
 ============
 
-.. image:: https://img.shields.io/pypi/v/zhmc-os-forwarder.svg
-    :target: https://pypi.python.org/pypi/zhmc-os-forwarder/
-    :alt: Version on Pypi
-
-.. image:: https://github.com/zhmcclient/zhmc-os-forwarder/workflows/test/badge.svg?branch=master
-    :target: https://github.com/zhmcclient/zhmc-os-forwarder/actions?query=branch%3Amaster
-    :alt: Test status (master)
-
-.. image:: https://readthedocs.org/projects/zhmc-os-forwarder/badge/?version=latest
-    :target: https://readthedocs.org/projects/zhmc-os-forwarder/builds/
-    :alt: Docs status (master)
-
-.. image:: https://coveralls.io/repos/github/zhmcclient/zhmc-os-forwarder/badge.svg?branch=master
-    :target: https://coveralls.io/github/zhmcclient/zhmc-os-forwarder?branch=master
-    :alt: Test coverage (master)
-
 The **IBM Z HMC OS Message Forwarder** connects to the console of operating
 systems running in LPARs on Z systems and forwards the messages written by the
 operating systems in the LPARs to remote syslog serverss.
@@ -111,4 +95,4 @@ License
 
 This package is licensed under the `Apache 2.0 License`_.
 
-.. _Apache 2.0 License: http://apache.org/licenses/LICENSE-2.0
+.. _Apache 2.0 License: https://apache.org/licenses/LICENSE-2.0
