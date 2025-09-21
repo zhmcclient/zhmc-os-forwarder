@@ -146,8 +146,9 @@ doc_build_dir := build_docs
 doc_build_file := $(doc_build_dir)/index.html
 doc_dependent_files := \
     $(wildcard $(doc_dir)/*.*) \
-		$(wildcard $(doc_dir)/*/*.*) \
-		examples/config_example.yaml \
+    $(wildcard $(doc_dir)/*/*.*) \
+    $(wildcard changes/*) \
+    examples/config_example.yaml \
     $(package_py_files) \
 
 # Source files for checks (with PyLint and Flake8, etc.)
