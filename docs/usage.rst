@@ -328,7 +328,7 @@ Note that setting the ``REQUESTS_CA_BUNDLE`` or ``CURL_CA_BUNDLE`` environment
 variables influences other programs that use these variables, too.
 
 For more information, see the
-`Security <https://python-zhmcclient.readthedocs.io/en/latest/security.html>`_
+`Security <https://python-zhmcclient.readthedocs.io/en/stable/security.html>`_
 section in the documentation of the 'zhmcclient' package.
 
 

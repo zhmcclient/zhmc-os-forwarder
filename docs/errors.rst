@@ -128,5 +128,5 @@ otherwise keeps on running.
 zhmcclient troubleshooting
 --------------------------
 
-The `zhmcclient Troubleshooting <https://python-zhmcclient.readthedocs.io/en/latest/appendix.html#troubleshooting>`_
+The `zhmcclient Troubleshooting <https://python-zhmcclient.readthedocs.io/en/stable/appendix.html#troubleshooting>`_
 section also applies to the forwarder.
