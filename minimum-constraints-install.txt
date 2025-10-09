@@ -48,5 +48,6 @@ pytz==2019.1
 requests==2.32.4
 six==1.16.0
 stomp.py==8.1.1
-typing-extensions==4.12.2
+typing-extensions==4.13.2; python_version == '3.8'
+typing-extensions==4.14.1; python_version >= '3.9'
 zipp==3.20.0
