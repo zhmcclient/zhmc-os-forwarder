@@ -57,7 +57,7 @@ forwarding:
         "hmc": {
             "host": "10.11.12.13",
             "userid": "myuser",
-            "password": "mypassword",
+            "password": "mypassword",  # nosec: B105
             "verify_cert": False,
         },
         "forwarding": [
