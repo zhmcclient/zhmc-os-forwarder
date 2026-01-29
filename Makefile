@@ -179,8 +179,6 @@ ruff_rc_file := .ruff.toml
 # PyLint config file
 pylint_rc_file := .pylintrc
 
-pytest_cov_opts := --cov $(package_name) --cov-config .coveragerc --cov-report=html:htmlcov
-
 ifeq ($(PACKAGE_LEVEL),minimum)
   pip_level_opts := -c minimum-constraints-develop.txt -c minimum-constraints-install.txt
 else
@@ -189,6 +187,13 @@ else
   else
     $(error Invalid value for PACKAGE_LEVEL variable: $(PACKAGE_LEVEL))
   endif
+endif
+
+pytest_general_opts := -s --color=yes
+ifdef TESTCASES
+pytest_test_opts := $(TESTOPTS) -k '$(TESTCASES)'
+else
+pytest_test_opts := $(TESTOPTS)
 endif
 
 .PHONY: help
@@ -228,6 +233,8 @@ help:
 	@echo "      Optional, defaults to 'latest'."
 	@echo "  PYTHON_CMD=... - Name of python command. Default: python"
 	@echo "  PIP_CMD=... - Name of pip command. Default: pip"
+	@echo "  TESTCASES=... - Testcase filter for pytest -k"
+	@echo "  TESTOPTS=... - Options for pytest"
 	@echo "  VERSION=... - M.N.U version to be released or started"
 	@echo "  BRANCH=... - Name of branch to be released or started (default is derived from VERSION)"
 
@@ -318,7 +325,7 @@ endif
 .PHONY: test
 test: $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: Performing unit tests and coverage with PACKAGE_LEVEL=$(PACKAGE_LEVEL)"
-	pytest $(pytest_cov_opts) -s $(test_dir)
+	bash -c "PYTHONPATH=. coverage run --append -m pytest $(pytest_general_opts) $(pytest_test_opts) $(test_dir)"
 	@echo "Makefile: Done performing unit tests and coverage"
 	@echo "Makefile: $@ done."
 
