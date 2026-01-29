@@ -297,7 +297,9 @@ pylint: $(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done
 	@echo "Makefile: $@ done."
 
 .PHONY: safety
-safety: $(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done $(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done
+safety: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) $(safety_install_policy_file) minimum-constraints-develop.txt minimum-constraints-install.txt
+	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
+	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
 	@echo "Makefile: $@ done."
 
 .PHONY: bandit
@@ -530,20 +532,6 @@ $(done_dir)/pylint_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$
 	pylint --rcfile=$(pylint_rc_file) --disable=fixme $(check_py_files)
 	echo "done" >$@
 	@echo "Makefile: Done performing pylint checks"
-
-$(done_dir)/safety_develop_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(safety_develop_policy_file) minimum-constraints-develop.txt
-	@echo "Makefile: Running Safety for development packages (and tolerate safety issues when RUN_TYPE is normal or scheduled)"
-	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_develop_policy_file) -r minimum-constraints-develop.txt --full-report || test '$(RUN_TYPE)' == 'normal' || test '$(RUN_TYPE)' == 'scheduled' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for development packages"
-
-$(done_dir)/safety_install_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done Makefile $(safety_install_policy_file) minimum-constraints-install.txt
-	@echo "Makefile: Running Safety for install packages (and tolerate safety issues when RUN_TYPE is normal)"
-	-$(call RM_FUNC,$@)
-	bash -c "safety check --policy-file $(safety_install_policy_file) -r minimum-constraints-install.txt --full-report || test '$(RUN_TYPE)' == 'normal' || exit 1"
-	echo "done" >$@
-	@echo "Makefile: Done running Safety for install packages"
 
 $(done_dir)/bandit_$(pymn)_$(PACKAGE_LEVEL).done: Makefile $(done_dir)/develop_$(pymn)_$(PACKAGE_LEVEL).done $(bandit_rc_file) $(check_py_files)
 	@echo "Makefile: Running Bandit"
