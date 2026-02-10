@@ -13,7 +13,7 @@
 zhmcclient>=1.18.2
 
 urllib3>=2.2.3; python_version == '3.8'
-urllib3>=2.6.0; python_version >= '3.9'
+urllib3>=2.6.3; python_version >= '3.9'
 jsonschema>=4.18.0
 
 # PyYAML pulled in by zhmcclient, dparse, python-coveralls
