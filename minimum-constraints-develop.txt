@@ -113,6 +113,7 @@ importlib-resources==5.12.0; python_version <= '3.9'
 # requirements file.
 
 alabaster==0.7.9
+anyio==4.5.2
 atomicwrites==1.4.0  # used with minimum package levels
 appdirs==1.4.3
 bleach==3.3.0
@@ -129,7 +130,10 @@ Jinja2==3.1.6
 keyring==18.0.0
 levenshtein==0.25.1
 more-itertools==8.0.0  # used with minimum package levels
-nltk==3.9.1
+# nltk 3.9.3 fixes CVE-2025-14009
+# Need to comment out nltk==3.9.2 due to issue https://github.com/pyupio/safety/issues/847
+# nltk==3.9.2; python_version == '3.9'
+nltk==3.9.3; python_version >= '3.10'
 pkginfo==1.4.2
 pyparsing==2.4.5
 requests-toolbelt==0.8.0
