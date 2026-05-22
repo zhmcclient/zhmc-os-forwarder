@@ -28,7 +28,11 @@ security:
     #     reason: {text}    # optional: Reason for ignoring it. Will be reported in the Safety reports
     #     expires: {date}   # optional: Date when this ignore will expire
     ignore-vulnerabilities:
-
-
+        90553:
+            reason: Fixed requests version 2.33.0 is used for Python>=3.10
+        'SFTY-20260122-20373':
+            reason: Fixed pytest version 9.0.3 requires Python>=3.10, using 8.3.5 for Python 3.9
+        'SFTY-20260322-35073':
+            reason: Fixed Pygments version 2.20.0 is used for Python>=3.10
     # Continue with exit code 0 when vulnerabilities are found.
     continue-on-vulnerability-error: False
