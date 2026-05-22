@@ -41,7 +41,8 @@ bandit==1.7.8
 # PyYAML is used by bandit and is covered in minimum-constraints-install.txt
 
 # Unit test (imports into testcases):
-pytest==8.3.5; python_version == '3.9'
+# Need to comment out pytest==8.3.5 due to issue https://github.com/pyupio/safety/issues/847
+# pytest==8.3.5; python_version == '3.9'
 pytest==9.0.3; python_version >= '3.10'
 pluggy==1.5.0
 importlib-metadata==8.7.0
@@ -126,7 +127,6 @@ Jinja2==3.1.6
 keyring==18.0.0
 levenshtein==0.25.1
 more-itertools==8.0.0  # used with minimum package levels
-# nltk 3.9.3 fixes CVE-2025-14009
 # Need to comment out nltk==3.9.2 due to issue https://github.com/pyupio/safety/issues/847
 # nltk==3.9.2; python_version == '3.9'
 nltk==3.9.4; python_version >= '3.10'
