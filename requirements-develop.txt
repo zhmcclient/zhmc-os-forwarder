@@ -99,7 +99,7 @@ sphinxcontrib-qthelp>=1.0.3
 sphinxcontrib-serializinghtml>=1.1.9
 sphinxcontrib-websupport>=1.2.4
 autodocsumm>=0.2.12
-Babel>=2.11.0
+Babel>=2.12.0
 
 # Package dependency management tools (not used by any make rules)
 pipdeptree>=2.24.0
@@ -107,6 +107,3 @@ pipdeptree>=2.24.0
 # pip-check-reqs 2.5.0 has issue https://github.com/r1chardj0n3s/pip-check-reqs/issues/143
 pip-check-reqs>=2.4.3,!=2.5.0; python_version <= '3.11'
 pip-check-reqs>=2.5.1; python_version >= '3.12'
-
-# towncrier depends on importlib-resources>=5, which is included in Python starting with 3.10
-importlib-resources>=5.12.0; python_version <= '3.9'

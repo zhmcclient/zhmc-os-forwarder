@@ -102,9 +102,6 @@ pipdeptree==2.24.0
 pip-check-reqs==2.4.3; python_version <= '3.11'
 pip-check-reqs==2.5.1; python_version >= '3.12'
 
-# towncrier depends on importlib-resources>=5, which is included in Python starting with 3.10
-importlib-resources==5.12.0; python_version <= '3.9'
-
 
 # ------------------------------------------------------------------------------
 # All remaining dependencies for development that are not in any other
@@ -120,6 +117,7 @@ gitdb==4.0.8
 html5lib==1.0.1  # used with minimum package levels
 httpx==0.28.1
 imagesize==1.3.0
+importlib-resources==5.12.0; python_version <= '3.11'  # Python 3.12 has importlib-resources 5.12
 iniconfig==1.1.1
 Jinja2==3.1.6
 keyring==18.0.0
