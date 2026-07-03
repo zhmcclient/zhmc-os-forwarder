@@ -23,7 +23,8 @@ towncrier>=22.8.0
 safety>=3.6.2
 safety-schemas>=0.0.16
 dparse>=0.6.4
-ruamel.yaml>=0.17.21
+# ruamel.yaml starting with 0.19.1 no longer requires ruamel.yaml.clib or ruamel.yaml.clibz
+ruamel.yaml>=0.19.1
 click>=8.0.2
 Authlib>=1.6.12
 marshmallow>=3.26.2
