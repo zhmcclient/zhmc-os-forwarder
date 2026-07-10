@@ -30,3 +30,4 @@ __pycache__/
 /try/
 *.log
 *.tmp
+/extra_reqs*.txt
