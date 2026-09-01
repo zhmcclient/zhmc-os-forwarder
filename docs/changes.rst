@@ -27,6 +27,133 @@ Change log
    .. include:: tmp_changes.rst
 
 .. towncrier start
+Version 1.2.0
+^^^^^^^^^^^^^
+
+Released: 2026-09-01
+
+**Incompatible changes:**
+
+* Removed support for Python 3.8, because (1) Python 3.8 is out of service since
+  2024-10-07, and (2) the license definition according to PEP 639 requires
+  setuptools >= 77.0.3 which requires Python >= 3.9, and pyproject.toml does
+  not support environment markers. (`#219 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/219>`_)
+
+**Bug fixes:**
+
+* Changed from the unmaintained GitHub action gsactions/commit-message-checker
+  to its new fork ddev/commit-message-checker.
+
+* Development: Fixed that pip-missing-reqs raised TypeError by pinning pip
+  to <26.2.
+
+* Fixed safety issues up to 2026-07-10.
+
+* Dev: Fixed issue where the package version used for distribution archive file
+  names were generated inconsistently between setuptools_scm (used in Makefile)
+  and the 'build' module, by using no build isolation ('--no-isolation' option
+  of the 'build' module) and increasing the minimum version of 'setuptools-scm'
+  to 9.2.0, which fixes a number of version related issues.
+
+* Upgrade nltk to 3.9.1 to fix the wordnet error, see https://github.com/nltk/nltk/issues/3416
+
+* Dev: Circumvented safety issue with import of typer module by pinning typer
+  to <0.17.0.
+
+* Development: Fixed that squash merges of the release/start PRs did not work in
+  the release/start process.
+
+* Docs: Fixed broken links in the documentation. Fixed the description of
+  commit message checking in the development section of the documentation to
+  remove the mentioning of the GitCop service which is no longer used.
+
+* Removed the pinning of typer version to <0.17.0 with the new release of safety 3.6.1 and
+  also upgraded minimum version of safety to be 3.6.1 to fix the issue with typer>=0.17.0, see  https://github.com/pyupio/safety/issues/778
+
+* Dev: Added dependencies for Sphinx.
+
+* Relaxed the commit message length check in the test workflow so
+  that it no longer requires an empty line after the title and that it
+  ignores the PR ID created by squash commits when checking the length.
+
+* Docs: Updates in Bibliography section: Collapsed the HMC WS-API books to a
+  single version (2.17), Added link to HMC Help, Updated HMC Security book to
+  2.17, Removed the HMC Operations Guide which no longer exists.
+
+* Docs: Removed the badges from the introduction page of the documentation
+  on readthedocs.org. The badges are still in the README file on the GitHub repo.
+
+* Test: Fixed new issues raised by pylint 4.0.0.
+
+* Dev: Fixed the dependencies in the Makefile: Because the package is no longer
+  installed in edit mode, the Python source files now needed to be added to
+  the dependency list of the 'install' target. Also, 'install' is no longer
+  a dependency of 'develop', because none of the targets that need 'develop'
+  need the package to be installed. Added Makefile as a dependent on rules
+  that produce files. (`#165 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/165>`_)
+
+* Dev: Made order of names in AUTHORS.md reliable. (`#167 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/167>`_)
+
+**Enhancements:**
+
+* Test: Added check for missing and extra dependencies in minimum constraints
+  files based on installed packages. The result is displayed as a warning in
+  the summary of the GitHub Actions run of the "test" workflow.
+
+* Development: Added a GitHub Actions workflow named 'backport' that creates a
+  backport PR to the latest stable branch stable_M.N when a PR labeled with the
+  'backport' label is merged.
+
+* Docs: The change log of the documentation on ReadTheDocs now shows the changes
+  of the next functional release in the version for the 'master' branch.
+
+* Dev: Added checking by Mend Renovate.
+
+* Docs: Changed the version setup on ReadTheDocs to only show released versions
+  and no longer branches such as 'latest' or 'stable'. Adjusted the verification
+  steps in the release instructions accordingly.
+
+* Docs: Added sections that describe how to handle GitHub Dependabot alerts
+  and how to use the assisted backporting of PRs.
+
+* Test: Enabled tests on Python 3.14.
+
+* Dev: Added doclinkcheck to GitHub Actions test workflow, ignoring errors. (`#161 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/161>`_)
+
+* Dev: Added commit message checker to test workflow. (`#162 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/162>`_)
+
+* Test: Improved some settings for coverage measurement, and enabled branch
+  coverage reporting. This lowered the overall coverage percentage somewhat.
+  Increased the minimum version of the "coverage" package to support the
+  newer properties in the coverage config. Along with that, increased the
+  minimum version of the "coveralls" package. (`#225 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/225>`_)
+
+**Cleanup:**
+
+* Test: Added retries for sending coverage data to the coveralls.io site to
+  address issues with the site.
+
+* Dev: Changed default shell on Windows to use bash from WSL. Removed make macros
+  that encapsulated differences between Windows and Linux/macOS. Removed 'bash -c'
+  from commands in the Makefile.
+
+* Test: Reduced the GitHub Actions test environments to save resources.
+
+* Removed unused packages from minimum constraints files.
+
+* Removed Travis control file (was used in IBM internal fork).
+
+* Simplified pip dependency file requirements-develop.txt by removing any indirect
+  package dependencies and leaving that to the requirements of the packages
+  we use directly. Reorganized the minimum-constraints-develop.txt file
+  accordingly.
+
+* Resolved several issues reported by new ruff version 4.
+
+* Used new license format defined in PEP 639 to accommodate upcoming removal
+  of support for old format. (`#216 <https://github.com/zhmcclient/zhmc-os-forwarder/issues/216>`_)
+
+
 Version 1.1.0
 ^^^^^^^^^^^^^
 
