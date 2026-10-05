@@ -257,8 +257,7 @@ class ForwarderServer:
                 logprint(logging.INFO, PRINT_ALWAYS,
                          "Stopping forwarder thread")
                 self._stop()
-            # pylint: disable=broad-exception-caught
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logprint(logging.ERROR, PRINT_ALWAYS,
                          "Error stopping forwarder thread: {m}".
                          format(m=exc))
@@ -367,8 +366,7 @@ class ForwarderServer:
                                      m=msg_txt))
                 try:
                     syslog.logger.info(syslog_txt)
-                # pylint: disable=broad-exception-caught
-                except Exception as exc:
+                except Exception as exc:  # noqa: E501 pylint: disable=broad-exception-caught
                     logprint(logging.WARNING, PRINT_ALWAYS,
                              "Warning: Cannot send seq_no {s} from LPAR {p!r} "
                              "on CPC {c!r} to syslog host {h}: {m}".
